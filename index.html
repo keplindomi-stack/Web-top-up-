@@ -3,338 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIONA.CORE - Quantum Transaction Terminal</title>
+    <title>VIONA.CORE // QUANTUM DOMINION</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@400;900&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <style>
-        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #050505; --dark-zinc: #121212; }
-        * { cursor: crosshair !important; scroll-behavior: smooth; }
-        body { background: var(--cyber-black); color: #fff; font-family: 'Share Tech Mono', monospace; overflow-x: hidden; }
+        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #020202; --gold: #ffd700; }
+        * { cursor: crosshair !important; box-sizing: border-box; }
+        body { background: var(--cyber-black); color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
         .sync { font-family: 'Syncopate', sans-serif; }
-        .orbitron { font-family: 'Orbitron', sans-serif; }
+        .mono { font-family: 'Share Tech Mono', monospace; }
 
-        /* SCROLLBAR CYBER */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--cyber-black); }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--maroon), var(--neon-pink)); border-radius: 10px; }
-
-        /* NEON EFFECTS */
-        .neon-glow { text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--maroon); }
-        .neon-border { border: 1px solid rgba(128, 0, 0, 0.5); box-shadow: inset 0 0 15px rgba(128, 0, 0, 0.2); }
-        .neon-border:hover { border-color: var(--neon-pink); box-shadow: 0 0 25px rgba(255, 0, 127, 0.3); }
+        /* BACKGROUND ELEMENTS */
+        #particles-js { position: fixed; inset: 0; z-index: -1; }
+        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(128,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(128,0,0,0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; }
         
-        /* BACKGROUND ANIMATION */
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
-        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 127, 0.05); position: fixed; top: 0; left: 0; z-index: 99; animation: scan 6s linear infinite; pointer-events: none; }
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
+        /* NEON UI */
+        .glass { background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(25px); border: 1px solid rgba(128, 0, 0, 0.2); }
+        .neon-border { border: 1px solid var(--maroon); box-shadow: 0 0 20px rgba(128, 0, 0, 0.1); }
+        .neon-border:hover { border-color: var(--neon-pink); box-shadow: 0 0 40px rgba(255, 0, 127, 0.4); }
+        .neon-text { text-shadow: 0 0 15px var(--neon-pink); }
 
-        /* COMPONENT STYLES */
-        .glass { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .game-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .game-card:hover { transform: translateY(-10px) scale(1.05); }
-        
-        /* CAROUSEL */
-        .carousel-container { position: relative; width: 100%; overflow: hidden; border-radius: 20px; border: 1px solid var(--maroon); }
-        .slide { display: none; width: 100%; animation: fade 1s; }
-        .slide img { width: 100%; height: 400px; object-fit: cover; }
-        @keyframes fade { from { opacity: 0.4; } to { opacity: 1; } }
+        /* TERMINAL STYLE */
+        #terminal-box { font-family: 'Share Tech Mono', monospace; color: #00ff00; font-size: 10px; height: 150px; overflow-y: auto; }
 
-        /* FLOATING MUSIC PLAYER */
-        .music-player { position: fixed; bottom: 20px; left: 20px; z-index: 100; }
-        
-        /* SIDEBAR SOCIAL */
-        .sidebar { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 100; }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideUp 0.5s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* NOTIFICATION */
+        #toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; }
+        .toast { background: rgba(128, 0, 0, 0.9); border-left: 4px solid var(--neon-pink); padding: 15px; margin-bottom: 10px; border-radius: 5px; animation: slideInRight 0.5s; }
 
-        /* BADGE */
-        .badge-quantum { background: linear-gradient(90deg, var(--maroon), var(--neon-pink)); font-size: 8px; padding: 2px 6px; border-radius: 2px; }
+        /* LOGIN OVERLAY */
+        #auth-overlay { position: fixed; inset: 0; background: var(--cyber-black); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        
+        /* PAYMENT MODAL */
+        #payment-modal { display: none; position: fixed; inset: 0; z-index: 10001; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+
+        .game-card-img { height: 120px; width: 100%; object-fit: cover; border-radius: 15px; filter: grayscale(100%); transition: 0.5s; }
+        .game-card:hover .game-card-img { filter: grayscale(0%); transform: scale(1.1); }
     </style>
 </head>
 <body>
+
     <div id="particles-js"></div>
-    <div class="scanline"></div>
+    <div class="grid-overlay"></div>
+    <div id="toast-container"></div>
 
-    <div class="music-player glass p-3 rounded-full flex items-center gap-3 neon-border">
-        <button onclick="toggleMusic()" class="w-8 h-8 rounded-full bg-maroon-900 flex items-center justify-center">
-            <i id="music-icon" class="fas fa-play text-[10px]"></i>
-        </button>
-        <div class="text-[8px] uppercase tracking-widest pr-4">
-            <div class="text-white">Cyberpunk.mp3</div>
-            <div class="text-zinc-500">Playing: Viona Theme</div>
-        </div>
-        <audio id="myAudio" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-        </audio>
-    </div>
-
-    <div class="sidebar flex flex-col gap-4 p-4 glass rounded-l-2xl border-l-2 border-l-[#ff007f]">
-        <a href="#" class="text-zinc-500 hover:text-[#ff007f]"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="text-zinc-500 hover:text-[#ff007f]"><i class="fab fa-tiktok"></i></a>
-        <a href="#" class="text-zinc-500 hover:text-[#ff007f]"><i class="fab fa-whatsapp"></i></a>
-    </div>
-
-    <nav class="max-w-7xl mx-auto flex justify-between items-center p-6 sticky top-0 z-[100] glass mt-4 rounded-2xl mx-4">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-gradient-to-br from-maroon-700 to-pink-600 rounded-lg rotate-45 flex items-center justify-center">
-                <span class="-rotate-45 font-bold orbitron">V</span>
-            </div>
-            <div>
-                <h1 class="text-xl font-black sync neon-text uppercase italic">VIONA<span class="text-white">.STORE</span></h1>
-                <div class="text-[8px] tracking-[0.5em] text-zinc-500">QUANTUM_SECURITY_V.5</div>
-            </div>
-        </div>
-        <div class="hidden md:flex gap-8 text-[10px] sync uppercase">
-            <a href="#home" class="hover:text-neon-pink transition border-b-2 border-neon-pink">Home</a>
-            <a href="#games" class="hover:text-neon-pink transition">Services</a>
-            <a href="#leaderboard" class="hover:text-neon-pink transition">Top_Up</a>
-            <a href="#track" class="hover:text-neon-pink transition">History</a>
-        </div>
-        <button class="badge-quantum sync px-4 py-2 hover:opacity-80">CONNECT_WALLET</button>
-    </nav>
-
-    <main class="max-w-7xl mx-auto px-4 mt-10">
-        
-        <section class="mb-20">
-            <div class="carousel-container neon-border h-[450px]">
-                <div class="slide">
-                    <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent z-10 p-12 flex flex-col justify-center">
-                        <span class="badge-quantum w-fit mb-4">NEW EVENT</span>
-                        <h2 class="text-5xl font-black sync italic mb-4">FREE FIRE<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-500">GENESIS</span></h2>
-                        <p class="text-zinc-400 max-w-md text-sm">Reload your diamonds with the fastest quantum protocol in the sector.</p>
-                        <button class="mt-8 bg-white text-black px-8 py-3 font-bold sync text-xs w-fit hover:bg-neon-pink hover:text-white transition">TOP UP NOW</button>
-                    </div>
-                    <img src="https://wallpapers.com/images/featured/free-fire-2pl077yv9p2p68v9.jpg" alt="FF">
-                </div>
-                <div class="slide">
-                    <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent z-10 p-12 flex flex-col justify-center">
-                        <span class="badge-quantum w-fit mb-4">MLBB COLLAB</span>
-                        <h2 class="text-5xl font-black sync italic mb-4">MOONLIGHT<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500">RISING</span></h2>
-                        <p class="text-zinc-400 max-w-md text-sm">Exclusive skin bundles available. Secure your diamonds with Viona.Core.</p>
-                        <button class="mt-8 bg-white text-black px-8 py-3 font-bold sync text-xs w-fit">GET DIAMONDS</button>
-                    </div>
-                    <img src="https://images8.alphacoders.com/105/1053702.jpg" alt="ML">
-                </div>
-            </div>
-        </section>
-
-        <section id="games" class="mb-20">
-            <div class="flex items-center gap-4 mb-10">
-                <div class="h-[1px] flex-1 bg-zinc-800"></div>
-                <h2 class="sync text-xl neon-text uppercase tracking-widest">DEPLOY_GATEWAY</h2>
-                <div class="h-[1px] flex-1 bg-zinc-800"></div>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                <div onclick="initiateProtocol('MLBB')" class="game-card glass p-2 rounded-2xl cursor-pointer neon-border relative group">
-                    <div class="absolute -top-2 -right-2 badge-quantum z-20">POPULAR</div>
-                    <img src="https://play-lh.googleusercontent.com/9jS-6jMh8K0E-o1T5U-u4q7fW_Tj-0X5vGf7XfB9B-X-X_X_X-X" class="w-full h-40 object-cover rounded-xl grayscale group-hover:grayscale-0 transition" alt="ML">
-                    <div class="p-4 text-center">
-                        <div class="text-[10px] font-bold sync">MLBB</div>
-                        <div class="text-[8px] text-zinc-500 italic mt-1">Instant Delivery</div>
-                    </div>
-                </div>
-                <div onclick="initiateProtocol('FREE_FIRE')" class="game-card glass p-2 rounded-2xl cursor-pointer neon-border relative group">
-                    <img src="https://play-lh.googleusercontent.com/WNWZ_9X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X" class="w-full h-40 object-cover rounded-xl grayscale group-hover:grayscale-0 transition" alt="FF">
-                    <div class="p-4 text-center">
-                        <div class="text-[10px] font-bold sync">FREE FIRE</div>
-                        <div class="text-[8px] text-zinc-500 italic mt-1">24/7 Service</div>
-                    </div>
-                </div>
-                </div>
-        </section>
-
-        <section id="protocol" class="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-20 opacity-50 pointer-events-none transition-all duration-700">
-            <div class="lg:col-span-2 space-y-6">
-                <div class="glass p-8 rounded-3xl neon-border relative">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl">01</div>
-                    <h3 class="sync text-sm mb-6 flex items-center gap-3">
-                        <i class="fas fa-fingerprint text-neon-pink"></i> USER_IDENTIFICATION
-                    </h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <label class="text-[8px] text-zinc-500 uppercase">Target_ID</label>
-                            <input type="text" id="target_id" placeholder="8-10 Digits" class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-xl focus:border-neon-pink outline-none text-xs transition">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[8px] text-zinc-500 uppercase">Zone_ID</label>
-                            <input type="text" id="zone_id" placeholder="4-5 Digits" class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-xl focus:border-neon-pink outline-none text-xs transition">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass p-8 rounded-3xl neon-border relative">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl">02</div>
-                    <h3 class="sync text-sm mb-6 uppercase">Select_Resources</h3>
-                    <div id="item-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        </div>
-                </div>
-            </div>
-
-            <div class="space-y-6">
-                <div class="glass p-8 rounded-3xl border-t-4 border-t-neon-pink sticky top-28">
-                    <h3 class="sync text-xs mb-8 underline">TRANSACTION_LOG</h3>
-                    <div class="space-y-6 text-[10px] tracking-widest">
-                        <div class="flex justify-between border-b border-zinc-800 pb-2">
-                            <span class="text-zinc-500 uppercase">System:</span>
-                            <span id="log-system" class="text-white">WAITING...</span>
-                        </div>
-                        <div class="flex justify-between border-b border-zinc-800 pb-2">
-                            <span class="text-zinc-500 uppercase">Target:</span>
-                            <span id="log-target" class="text-neon-pink">ID_NULL</span>
-                        </div>
-                        <div class="flex justify-between border-b border-zinc-800 pb-2">
-                            <span class="text-zinc-500 uppercase">Resource:</span>
-                            <span id="log-item" class="text-white">NONE</span>
-                        </div>
-                        <div class="flex justify-between pt-4">
-                            <span class="text-zinc-500 uppercase font-bold">Total_Value:</span>
-                            <span id="log-price" class="text-2xl font-black neon-text">Rp 0</span>
-                        </div>
-                    </div>
-                    <button onclick="executeFinalOrder()" class="w-full mt-10 bg-maroon-900 py-4 rounded-xl font-black sync text-[10px] tracking-[0.4em] hover:bg-neon-pink transition-all shadow-2xl">
-                        EXECUTE_ORDER
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section id="leaderboard" class="mb-20 glass p-10 rounded-3xl neon-border overflow-hidden relative">
-            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-maroon-700 blur-[100px] opacity-20"></div>
-            <h2 class="sync text-xl text-center mb-10 italic">QUANTUM_TOP_WHALES</h2>
+    <div id="auth-overlay">
+        <div class="glass p-10 rounded-[40px] border-2 border-maroon-900 w-full max-w-md text-center">
+            <h2 class="sync text-3xl mb-2 neon-text italic">SYSTEM_BOOT</h2>
+            <p class="mono text-[10px] text-zinc-500 mb-10 tracking-[0.5em]">ENCRYPTING_SESSION...</p>
             <div class="space-y-4">
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                    <div class="flex items-center gap-4">
-                        <span class="text-neon-pink font-black italic">01</span>
-                        <div class="w-10 h-10 rounded-full bg-zinc-800 border border-neon-pink flex items-center justify-center">V</div>
-                        <div class="text-sm font-bold uppercase">VIONA_CUTE_99</div>
-                    </div>
-                    <div class="text-xs text-zinc-500">Rp 12,500,000</div>
-                </div>
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 opacity-70">
-                    <div class="flex items-center gap-4">
-                        <span class="text-white font-black italic">02</span>
-                        <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">A</div>
-                        <div class="text-sm font-bold uppercase">ALEX_HACKER</div>
-                    </div>
-                    <div class="text-xs text-zinc-500">Rp 5,400,000</div>
-                </div>
-                </div>
-        </section>
-
-    </main>
-
-    <footer class="p-20 bg-zinc-950 border-t border-zinc-800 text-center relative overflow-hidden">
-        <div class="sync text-[10px] text-zinc-500 mb-4 tracking-[0.5em]">OPERATED BY QUANTUM_VIONA_PROTOCOL</div>
-        <div class="text-xs text-zinc-700">© 2077 VIONA.CORE - ALL TRANSACTIONS ENCRYPTED</div>
-        <div class="mt-8 flex justify-center gap-6 opacity-30">
-            <i class="fas fa-shield-alt text-4xl"></i>
-            <i class="fas fa-microchip text-4xl"></i>
-            <i class="fas fa-satellite-dish text-4xl"></i>
+                <input type="text" id="username" placeholder="SUBJECT_ID" class="w-full bg-zinc-950 border border-zinc-800 p-5 rounded-2xl outline-none focus:border-neon-pink mono">
+                <input type="password" id="password" placeholder="ACCESS_CODE" class="w-full bg-zinc-950 border border-zinc-800 p-5 rounded-2xl outline-none focus:border-neon-pink mono">
+                <button onclick="login()" class="w-full py-5 bg-maroon-900 rounded-2xl font-black sync text-[12px] hover:bg-neon-pink tracking-[0.3em]">INITIALIZE</button>
+            </div>
+            <div class="mt-6 text-[8px] text-zinc-600 italic">OWNER_CREDENTIALS: KELVIN // VIONA</div>
         </div>
-    </footer>
+    </div>
+
+    <div id="payment-modal">
+        <div class="glass p-8 rounded-3xl border-2 border-neon-pink max-w-sm w-full text-center">
+            <h3 class="sync text-sm mb-6">QUANTUM_QRIS_PAY</h3>
+            <div class="bg-white p-4 rounded-xl inline-block mb-6">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VionaSayangKelvin" alt="QRIS">
+            </div>
+            <p class="text-[10px] mono text-zinc-400 mb-6 uppercase">Scan to Complete Injection</p>
+            <button onclick="closePayment()" class="w-full py-3 bg-zinc-900 rounded-lg text-xs sync">CANCEL_TRANSACTION</button>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        
+        <nav class="max-w-7xl mx-auto p-6 flex justify-between items-center sticky top-0 z-[100] backdrop-blur-xl border-b border-zinc-900">
+            <div class="flex items-center gap-4">
+                <div class="h-8 w-8 bg-neon-pink animate-pulse rounded-full"></div>
+                <h1 class="sync text-xl font-black neon-text italic">VIONA<span class="text-white">.STORE</span></h1>
+            </div>
+            <div id="terminal-box" class="hidden lg:block w-96 glass p-2 rounded-lg opacity-50">
+                <div id="console-out">> System ready...</div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="rank-badge" class="badge bg-zinc-800 text-[8px] px-3 py-1 rounded-full text-gold-500 border border-yellow-600">RANK: SUBJECT</span>
+                <button onclick="location.reload()" class="text-xs hover:text-neon-pink"><i class="fas fa-power-off"></i></button>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <aside class="space-y-6">
+                <div class="glass p-6 rounded-3xl neon-border">
+                    <h4 class="sync text-[10px] mb-4 text-zinc-500">USER_PROFILE</h4>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-maroon-800 border-2 border-neon-pink overflow-hidden">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Kelvin" alt="AV">
+                        </div>
+                        <div>
+                            <div id="user-display" class="font-bold text-sm">KELVIN</div>
+                            <div class="text-[8px] text-zinc-500 uppercase tracking-widest">Master Key Holder</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 rounded-3xl border-l-4 border-l-neon-pink">
+                    <h4 class="sync text-[10px] mb-4">LIVE_FEED</h4>
+                    <div id="live-feed" class="text-[9px] mono space-y-2 text-zinc-400">
+                        </div>
+                </div>
+            </aside>
+
+            <div class="lg:col-span-3 space-y-10">
+                
+                <section>
+                    <h2 class="sync text-lg mb-8 italic">AVAILABLE_PROTOCOLS</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div onclick="selectGame('MLBB', 'https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png')" class="game-card glass p-4 rounded-3xl neon-border cursor-pointer">
+                            <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png" class="game-card-img mb-4">
+                            <div class="text-center font-bold text-xs uppercase">Mobile Legends</div>
+                        </div>
+                        <div onclick="selectGame('FREE_FIRE', 'https://ik.imagekit.io/unipin/assets/images/game-icon/1663047262077_icon_ff.png')" class="game-card glass p-4 rounded-3xl neon-border cursor-pointer">
+                            <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047262077_icon_ff.png" class="game-card-img mb-4">
+                            <div class="text-center font-bold text-xs uppercase">Free Fire</div>
+                        </div>
+                        </div>
+                </section>
+
+                <section id="order-form" class="hidden glass p-10 rounded-[40px] border-t-2 border-t-neon-pink">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-6">
+                            <h3 id="selected-game-title" class="sync text-2xl neon-text">SELECT_GAME</h3>
+                            <div class="space-y-2">
+                                <label class="text-[10px] mono text-zinc-500">ID_QUANTUM</label>
+                                <input type="text" id="target-id" placeholder="Ex: 88271622" class="w-full bg-black border border-zinc-800 p-5 rounded-2xl focus:border-neon-pink outline-none">
+                            </div>
+                            <div id="nominal-grid" class="grid grid-cols-2 gap-3 pt-4">
+                                </div>
+                        </div>
+                        <div class="glass p-8 rounded-[30px] border border-zinc-800 flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <h4 class="sync text-xs italic underline">BILLING_SUMMARY</h4>
+                                <div class="flex justify-between text-xs"><span>ITEM:</span> <span id="bill-item">-</span></div>
+                                <div class="flex justify-between text-xs font-black text-neon-pink italic text-xl pt-4"><span>TOTAL:</span> <span id="bill-price">Rp 0</span></div>
+                            </div>
+                            <button onclick="pay()" class="w-full mt-10 py-5 bg-maroon-900 rounded-2xl sync font-bold hover:bg-neon-pink transition animate-pulse">INITIATE_PAYMENT</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // PARTICLES BG
-        particlesJS("particles-js", {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#800000" },
-                shape: { type: "circle" },
-                opacity: { value: 0.5, random: true },
-                size: { value: 2, random: true },
-                line_linked: { enable: true, distance: 150, color: "#ff007f", opacity: 0.2, width: 1 },
-                move: { enable: true, speed: 1, direction: "none", random: true, out_mode: "out" }
-            }
-        });
-
-        // CAROUSEL LOGIC
-        let slideIndex = 0;
-        const slides = document.getElementsByClassName("slide");
-        function showSlides() {
-            for (let i = 0; i < slides.length; i++) slides[i].style.display = "none";
-            slideIndex++;
-            if (slideIndex > slides.length) slideIndex = 1;
-            slides[slideIndex-1].style.display = "block";
-            setTimeout(showSlides, 5000);
-        }
-        showSlides();
-
-        // MUSIC LOGIC
-        function toggleMusic() {
-            const audio = document.getElementById("myAudio");
-            const icon = document.getElementById("music-icon");
-            if (audio.paused) {
-                audio.play();
-                icon.classList.replace("fa-play", "fa-pause");
+        // LOGIC LOGIN
+        function login() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if(u === "KELVIN" && p === "VIONA") {
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('app').classList.remove('hidden');
+                document.getElementById('user-display').innerText = "KELVIN";
+                document.getElementById('rank-badge').innerText = "RANK: OWNER";
+                logConsole("Access Granted. Welcome Owner Kelvin.");
+                startFeeds();
+            } else if (u !== "" && p !== "") {
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('app').classList.remove('hidden');
+                document.getElementById('user-display').innerText = u;
+                logConsole("Access Granted. Welcome Subject " + u);
+                startFeeds();
             } else {
-                audio.pause();
-                icon.classList.replace("fa-pause", "fa-play");
+                alert("INVALID ACCESS KEY, BEGO!");
             }
         }
 
-        // DYNAMIC PROTOCOL LOGIC
-        const items = {
-            'MLBB': [
-                {name: '86 Diamonds', price: 'Rp 20.500'},
-                {name: '172 Diamonds', price: 'Rp 41.000'},
-                {name: '257 Diamonds', price: 'Rp 61.500'},
-                {name: 'Weekly Pass', price: 'Rp 28.000', special: true},
-                {name: '706 Diamonds', price: 'Rp 160.000'},
-                {name: 'Twilight Pass', price: 'Rp 150.000'}
-            ],
-            'FREE_FIRE': [
-                {name: '70 Diamonds', price: 'Rp 10.000'},
-                {name: '140 Diamonds', price: 'Rp 20.000'},
-                {name: '355 Diamonds', price: 'Rp 50.000'},
-                {name: 'Weekly Member', price: 'Rp 30.000', special: true}
-            ]
-        };
+        // CONSOLE LOGIC
+        function logConsole(msg) {
+            const c = document.getElementById('console-out');
+            c.innerHTML += `<br>> ${msg}`;
+            document.getElementById('terminal-box').scrollTop = document.getElementById('terminal-box').scrollHeight;
+        }
 
-        function initiateProtocol(game) {
-            const section = document.getElementById('protocol');
-            const grid = document.getElementById('item-grid');
-            section.style.opacity = '1';
-            section.style.pointerEvents = 'auto';
-            document.getElementById('log-system').innerText = game;
+        // FEED LOGIC
+        const feeds = ["Viona_Cute topup 86 DM", "User_Alpha buy Weekly Pass", "X-Coder inject 706 DM", "Viona.Core system updated"];
+        function startFeeds() {
+            setInterval(() => {
+                const f = feeds[Math.floor(Math.random()*feeds.length)];
+                const el = document.getElementById('live-feed');
+                const div = document.createElement('div');
+                div.innerText = `[${new Date().toLocaleTimeString()}] ${f}`;
+                el.prepend(div);
+                if(el.children.length > 5) el.lastChild.remove();
+                
+                // Also show toast
+                if(Math.random() > 0.7) showToast(f);
+            }, 4000);
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = 'toast sync text-[8px]';
+            t.innerText = msg.toUpperCase();
+            container.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // GAME LOGIC
+        function selectGame(name, img) {
+            document.getElementById('order-form').classList.remove('hidden');
+            document.getElementById('selected-game-title').innerText = name;
+            logConsole("Selected Protocol: " + name);
             
+            const grid = document.getElementById('nominal-grid');
             grid.innerHTML = '';
-            items[game].forEach(item => {
+            const items = name === 'MLBB' ? ['86 DM|20rb', '172 DM|40rb', 'Weekly|28rb'] : ['70 DM|10rb', '140 DM|20rb', 'Weekly Gold|30rb'];
+            
+            items.forEach(i => {
+                const [n, p] = i.split('|');
                 const btn = document.createElement('button');
-                btn.className = `p-4 glass rounded-2xl border border-zinc-800 text-left hover:border-neon-pink transition-all group ${item.special ? 'border-neon-pink' : ''}`;
-                btn.innerHTML = `
-                    <div class="text-[8px] text-zinc-500 uppercase">${game}</div>
-                    <div class="text-xs font-bold ${item.special ? 'text-neon-pink' : 'text-white'}">${item.name}</div>
-                    <div class="text-[10px] mt-2 font-black">${item.price}</div>
-                `;
+                btn.className = "p-4 glass rounded-xl border border-zinc-800 hover:border-neon-pink text-xs text-left";
+                btn.innerHTML = `<b>${n}</b><br><span class='text-zinc-500'>${p}</span>`;
                 btn.onclick = () => {
-                    document.querySelectorAll('.item-btn-active').forEach(b => b.classList.remove('item-btn-active', 'border-neon-pink'));
-                    btn.classList.add('item-btn-active', 'border-neon-pink');
-                    document.getElementById('log-item').innerText = item.name;
-                    document.getElementById('log-price').innerText = item.price;
+                    document.getElementById('bill-item').innerText = n;
+                    document.getElementById('bill-price').innerText = 'Rp ' + p.replace('rb', '.000');
+                    logConsole("Resource Ready: " + n);
                 };
                 grid.appendChild(btn);
             });
-            section.scrollIntoView({behavior: 'smooth'});
+            window.scrollTo(0, document.getElementById('order-form').offsetTop - 100);
         }
 
-        // INPUT LOGS
-        document.getElementById('target_id').addEventListener('input', (e) => {
-            document.getElementById('log-target').innerText = e.target.value || 'ID_NULL';
+        function pay() {
+            document.getElementById('payment-modal').style.display = 'flex';
+            logConsole("Awaiting Payment via QRIS...");
+        }
+
+        function closePayment() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        // PARTICLES
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 100 },
+                color: { value: "#800000" },
+                line_linked: { color: "#ff007f", opacity: 0.15 },
+                move: { speed: 2 }
+            }
         });
-
-        function executeFinalOrder() {
-            const id = document.getElementById('target_id').value;
-            const item = document.getElementById('log-item').innerText;
-            if(!id || item === 'NONE') return alert('SYSTEM ERROR: COMPLETE THE DATA, BEGO!');
-            
-            alert('PROTOCOL INITIATED: Pesanan ' + item + ' untuk ID ' + id + ' sedang dikirim lewat satelit Viona! 🚀💖');
-        }
     </script>
 </body>
 </html>
