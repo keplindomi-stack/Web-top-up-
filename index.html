@@ -1,203 +1,229 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIONA.STORE // OMNIVERSE EDITION</title>
+    <title>VIONA.STORE // THE OMNIPOTENT GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&family=Outfit:wght@300;500;900&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     
     <style>
-        :root { --blue: #0070ff; --dark: #050505; --card: #ffffff; }
-        * { cursor: default !important; -webkit-tap-highlight-color: transparent; }
-        body { background: #f0f4f8; color: #000; font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root { --v-blue: #0062ff; --v-deep: #000814; --v-accent: #00f2ff; }
+        body { background-color: var(--v-deep); color: #fff; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
         .unbound { font-family: 'Unbounded', sans-serif; }
-        
-        /* FIX VISUAL BUG & SHADOWS */
-        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .hero-grad { background: linear-gradient(135deg, #001e4d 0%, #0070ff 100%); border-radius: 50px; }
-        
-        /* GAME CARD ENGINE */
-        .game-card { 
-            background: white; border-radius: 35px; overflow: hidden; 
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0, 112, 255, 0.05);
-            border: 2px solid transparent;
-        }
-        .game-card:hover { 
-            transform: translateY(-15px) scale(1.02); 
-            border-color: var(--blue);
-            box-shadow: 0 40px 80px rgba(0, 112, 255, 0.15);
-        }
-        .game-img-container { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #eee; position: relative; }
-        .game-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .game-card:hover .game-img { transform: scale(1.1); }
+        .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 10px; }
+        /* UNIVERSAL BACKGROUND GRID */
+        .bg-cyber { position: fixed; inset: 0; z-index: -1; background: 
+            radial-gradient(circle at 50% 50%, rgba(0, 98, 255, 0.1) 0%, transparent 80%),
+            linear-gradient(rgba(0, 98, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 98, 255, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px; }
 
-        /* AUTH GATE */
-        #auth-gate { position: fixed; inset: 0; z-index: 9999; background: white; display: flex; align-items: center; justify-content: center; transition: 1s cubic-bezier(0.85, 0, 0.15, 1); }
+        /* OMNI-CARD REVOLUTION */
+        .omni-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .omni-card:hover { transform: translateY(-20px) scale(1.03); background: rgba(0, 98, 255, 0.08); border-color: var(--v-blue); box-shadow: 0 40px 100px rgba(0, 98, 255, 0.3); }
+
+        /* SHIMMERING BUTTONS */
+        .btn-god { background: linear-gradient(90deg, #0062ff, #00f2ff); border-radius: 20px; transition: 0.4s; position: relative; overflow: hidden; }
+        .btn-god::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s; }
+        .btn-god:hover::before { left: 100%; }
+        .btn-god:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--v-blue); }
+
+        /* DYNAMIC IMAGE FIX */
+        .img-container { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 30px; overflow: hidden; background: #00122e; }
+        .img-node { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
+        .omni-card:hover .img-node { transform: scale(1.2) rotate(3deg); filter: brightness(1.2); }
+
+        /* 1000+ SPEED OPTIMIZATION CLASS */
+        .fast-render { will-change: transform, opacity; }
         
-        /* CATEGORY BADGE */
-        .cat-badge { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 12px; font-size: 10px; font-weight: 800; color: var(--blue); z-index: 10; }
-
-        /* GRID FIX */
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
-        @media (max-width: 640px) { .game-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+        /* SCROLLBAR GOD MODE */
+        ::-webkit-scrollbar { width: 6px; background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--v-blue); border-radius: 100px; }
     </style>
 </head>
-<body>
+<body class="fast-render">
+    <div class="bg-cyber"></div>
 
-    <div id="auth-gate">
-        <div class="w-full max-w-md p-10">
-            <h1 class="unbound text-4xl text-blue-600 italic text-center mb-10">VIONA<span class="text-black">.</span></h1>
-            <div class="space-y-4">
-                <input type="text" id="user-in" placeholder="Username" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
-                <input type="password" id="pass-in" placeholder="Password" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
-                <button onclick="boot()" class="w-full py-5 bg-blue-600 text-white rounded-3xl font-black text-sm tracking-widest shadow-xl hover:bg-black transition-all">INITIALIZE</button>
+    <div id="god-gate" class="fixed inset-0 z-[99999] bg-black flex items-center justify-center transition-all duration-1000">
+        <div class="text-center p-10" data-aos="zoom-in">
+            <div class="mb-10 relative">
+                <h1 class="unbound text-6xl md:text-8xl italic tracking-tighter text-white">VIONA<span class="text-blue-600">.</span></h1>
+                <div class="absolute -inset-4 bg-blue-600 blur-3xl opacity-20 animate-pulse"></div>
             </div>
-            <p class="text-center mt-8 text-[10px] font-bold text-slate-300 uppercase">Owner: KELVIN // VIONA</p>
+            <div id="auth-box" class="space-y-6 w-full max-w-sm mx-auto">
+                <div class="flex bg-zinc-900/50 p-2 rounded-3xl border border-zinc-800 mb-6">
+                    <button onclick="toggleAuth('login')" id="btn-login" class="flex-1 py-4 rounded-2xl text-xs font-black bg-blue-600 transition-all">LOGIN</button>
+                    <button onclick="toggleAuth('reg')" id="btn-reg" class="flex-1 py-4 rounded-2xl text-xs font-black text-zinc-500 transition-all">REGISTER</button>
+                </div>
+                <div id="form-container" class="space-y-4">
+                    <input type="text" id="user" placeholder="ACCESS_ID" class="w-full p-5 bg-zinc-900 border border-zinc-800 rounded-2xl outline-none focus:border-blue-600 mono text-xs">
+                    <input type="password" id="pass" placeholder="SECRET_KEY" class="w-full p-5 bg-zinc-900 border border-zinc-800 rounded-2xl outline-none focus:border-blue-600 mono text-xs">
+                    <button onclick="ignite()" class="btn-god w-full py-5 text-[10px] font-black tracking-[0.5em]">ESTABLISH_CONNECTION</button>
+                </div>
+            </div>
+            <p class="mt-12 text-[8px] mono text-zinc-700 tracking-widest uppercase">Admin Presence: KELVIN // VIONA</p>
         </div>
     </div>
 
-    <div id="app" class="hidden">
-        <nav class="glass-nav sticky top-0 z-[100] px-6 py-5">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <h2 class="unbound text-xl italic tracking-tighter">VIONA<span class="text-blue-600">.STORE</span></h2>
-                <div class="flex gap-4 items-center">
-                    <span id="rank" class="hidden md:block px-4 py-1 bg-blue-600 text-white text-[9px] font-black rounded-full uppercase">God Mode: Kelvin</span>
-                    <button onclick="location.reload()" class="w-10 h-10 bg-slate-100 rounded-full text-slate-400 hover:text-red-500 transition"><i class="fas fa-power-off"></i></button>
-                </div>
+    <div id="main-ui" class="hidden opacity-0">
+        <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto sticky top-0 z-[100] backdrop-blur-md">
+            <div class="unbound text-2xl italic tracking-tighter">VIONA<span class="text-blue-500">.CORE</span></div>
+            <div class="flex items-center gap-8">
+                <div id="owner-status" class="hidden px-6 py-2 bg-blue-600/10 border border-blue-500 text-blue-500 rounded-full text-[9px] font-black uppercase animate-pulse">God Presence Detected: Kelvin</div>
+                <button onclick="location.reload()" class="hover:text-red-500 transition-all"><i class="fas fa-ghost text-xl"></i></button>
             </div>
         </nav>
 
-        <main class="max-w-7xl mx-auto px-6 py-10">
-            <div class="hero-grad p-12 md:p-24 text-white mb-20 relative overflow-hidden">
-                <div class="relative z-10">
-                    <h1 class="unbound text-5xl md:text-8xl mb-6 leading-none">OMNIVERSE <br>RESOURCES.</h1>
-                    <p class="text-blue-100 max-w-xl font-bold mb-10 opacity-80">Top-up 20+ Game Terpopuler. Harga termurah, proses secepat kilat. Hanya di Viona.Store.</p>
+        <header class="max-w-7xl mx-auto px-8 py-20">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div data-aos="fade-right">
+                    <span class="text-blue-500 font-black text-xs tracking-[0.5em] mb-4 block uppercase">The Ultimate Platform</span>
+                    <h1 class="unbound text-6xl md:text-9xl leading-[0.8] mb-8 italic">POWER <br><span class="text-zinc-700">TO THE</span> <br>GAMES.</h1>
+                    <p class="text-zinc-400 text-lg mb-12 max-w-md font-light">Sistem top-up dengan kecepatan cahaya. 1000+ fitur otomatis dalam satu terminal premium.</p>
+                    <div class="flex gap-6">
+                        <a href="#market" class="btn-god px-12 py-5 text-xs font-black">EXPLORE_MARKET</a>
+                        <button class="px-12 py-5 border border-zinc-800 rounded-2xl text-xs font-black hover:bg-white hover:text-black transition">SYSTEM_DOCS</button>
+                    </div>
                 </div>
-                <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="relative" data-aos="fade-left">
+                    <div class="w-full aspect-square bg-blue-600/10 border border-blue-600/20 rounded-[80px] flex items-center justify-center overflow-hidden">
+                        <i class="fas fa-atom text-[150px] text-blue-600/30 animate-spin-slow"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="market" class="max-w-7xl mx-auto px-8 py-40">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
+                <div>
+                    <h3 class="unbound text-4xl italic mb-4">THE_CATALOGUE</h3>
+                    <p class="mono text-xs text-zinc-500 tracking-widest uppercase">Nodes Available: 24+ Active Services</p>
+                </div>
+                <div class="relative w-full md:w-96">
+                    <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                    <input type="text" onkeyup="filterGames(this)" placeholder="SEARCH_SERVICE..." class="w-full bg-zinc-900 p-6 pl-16 rounded-3xl border border-zinc-800 outline-none focus:border-blue-500 mono text-xs">
+                </div>
             </div>
 
-            <div class="mb-12 flex flex-col md:flex-row gap-6 justify-between items-center">
-                <h3 class="unbound text-2xl italic">AVAILABLE_GAMES</h3>
-                <input type="text" placeholder="Search game..." class="w-full md:w-80 p-4 bg-white rounded-2xl outline-none border-2 border-slate-100 focus:border-blue-500 font-bold text-sm">
-            </div>
-
-            <div class="game-grid mb-40" id="game-container">
+            <div id="game-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                 </div>
         </section>
 
-        <section id="order-ui" class="hidden fixed inset-0 z-[200] bg-white overflow-y-auto p-6 md:p-20">
-            <button onclick="closeOrder()" class="absolute top-10 right-10 text-3xl hover:text-blue-600 transition"><i class="fas fa-times"></i></button>
-            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20">
-                <div class="space-y-10">
-                    <h2 id="target-name" class="unbound text-5xl text-blue-600 italic">MLBB</h2>
-                    <div class="space-y-4">
-                        <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Step 1: Identity</label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="User ID" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
-                            <input type="text" placeholder="Server ID" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Step 2: Nominal</label>
-                        <div id="nominal-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
-                    </div>
-                </div>
-                <div class="bg-slate-100 p-12 rounded-[50px] h-fit">
-                    <h4 class="unbound text-xs mb-10 opacity-30 tracking-[0.5em]">CHECKOUT_SUMMARY</h4>
-                    <div class="space-y-6">
-                        <div class="flex justify-between font-black text-sm uppercase"><span>Item</span> <span id="res-item" class="text-blue-600">-</span></div>
-                        <div class="flex justify-between font-black text-4xl italic mt-10"><span>Total</span> <span id="res-price">0</span></div>
-                    </div>
-                    <button onclick="alert('PROCESSING ORDER...')" class="w-full mt-12 py-6 bg-blue-600 text-white rounded-[30px] font-black tracking-widest hover:bg-black transition shadow-2xl">CONFIRM ORDER</button>
-                </div>
-            </div>
-        </section>
+        <footer class="p-20 text-center border-t border-zinc-900">
+            <p class="mono text-[10px] text-zinc-600 tracking-[1em] uppercase">Viona.Store // Established by God Kelvin 2026</p>
+        </footer>
     </div>
 
+    <div id="omni-modal" class="fixed inset-0 z-[200] bg-black/95 hidden backdrop-blur-3xl overflow-y-auto">
+        <div class="max-w-7xl mx-auto px-8 py-20 relative">
+            <button onclick="closeModal()" class="fixed top-10 right-10 text-4xl text-zinc-500 hover:text-white transition"><i class="fas fa-times-circle"></i></button>
+            <div class="grid lg:grid-cols-2 gap-24">
+                <div class="space-y-12">
+                    <h2 id="modal-title" class="unbound text-6xl md:text-8xl italic text-blue-600">TITLE</h2>
+                    <div class="omni-card p-10">
+                        <h4 class="unbound text-[10px] mb-10 tracking-widest text-zinc-500">01. INJECTION_TARGET</h4>
+                        <div class="grid grid-cols-2 gap-6">
+                            <input type="text" id="target-id" placeholder="USER_ID" class="w-full bg-black border border-zinc-800 p-6 rounded-2xl outline-none focus:border-blue-600 mono">
+                            <input type="text" id="target-zone" placeholder="SERVER" class="w-full bg-black border border-zinc-800 p-6 rounded-2xl outline-none focus:border-blue-600 mono">
+                        </div>
+                    </div>
+                    <div id="package-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                </div>
+                <div class="relative">
+                    <div class="sticky top-20 bg-blue-600 p-12 rounded-[60px] shadow-[0_0_100px_rgba(0,98,255,0.4)]">
+                        <h4 class="unbound text-xs mb-10 tracking-widest text-white/50">ORDER_DATA_REPORT</h4>
+                        <div class="space-y-8 font-black uppercase italic">
+                            <div class="flex justify-between border-b border-white/10 pb-4"><span>Service</span> <span id="res-game" class="text-white">NONE</span></div>
+                            <div class="flex justify-between border-b border-white/10 pb-4"><span>Package</span> <span id="res-item" class="text-white">NONE</span></div>
+                            <div class="flex justify-between pt-10 text-5xl"><span>Price</span> <span id="res-price">0</span></div>
+                        </div>
+                        <button onclick="finalize()" class="w-full mt-12 py-8 bg-white text-blue-600 rounded-[30px] font-black text-sm tracking-widest hover:bg-black hover:text-white transition-all shadow-2xl">EXECUTE_PROTOCOL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        const games = [
-            { id: 'mlbb', name: 'Mobile Legends', img: 'https://cdn1.codashop.com/S/content/common/images/mno/MLBB_640x640.png', cat: 'MOBA' },
+        AOS.init({ duration: 1000, once: true });
+
+        const dataStore = [
+            { id: 'ml', name: 'MLBB', img: 'https://cdn1.codashop.com/S/content/common/images/mno/MLBB_640x640.png', cat: 'MOBA' },
             { id: 'ff', name: 'Free Fire', img: 'https://cdn1.codashop.com/S/content/common/images/mno/FreeFire_640x640.png', cat: 'BATTLE' },
-            { id: 'roblox', name: 'Roblox', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Roblox_640x640.png', cat: 'REWARD' },
-            { id: 'genshin', name: 'Genshin Impact', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Genshin_640x640.png', cat: 'RPG' },
-            { id: 'valorant', name: 'Valorant', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Valorant_640x640.png', cat: 'FPS' },
-            { id: 'pubg', name: 'PUBG Mobile', img: 'https://cdn1.codashop.com/S/content/common/images/mno/PUBGM_640x640.png', cat: 'BATTLE' },
+            { id: 'rbx', name: 'Roblox', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Roblox_640x640.png', cat: 'GLOBAL' },
+            { id: 'genshin', name: 'Genshin', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Genshin_640x640.png', cat: 'RPG' },
+            { id: 'valo', name: 'Valorant', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Valorant_640x640.png', cat: 'FPS' },
+            { id: 'pubg', name: 'PUBGM', img: 'https://cdn1.codashop.com/S/content/common/images/mno/PUBGM_640x640.png', cat: 'BATTLE' },
             { id: 'hok', name: 'Honor of Kings', img: 'https://cdn1.codashop.com/S/content/common/images/mno/HOK_640x640.png', cat: 'MOBA' },
-            { id: 'codm', name: 'COD Mobile', img: 'https://cdn1.codashop.com/S/content/common/images/mno/CODM_640x640.png', cat: 'FPS' },
+            { id: 'codm', name: 'CODM', img: 'https://cdn1.codashop.com/S/content/common/images/mno/CODM_640x640.png', cat: 'FPS' },
             { id: 'pb', name: 'Point Blank', img: 'https://cdn1.codashop.com/S/content/common/images/mno/PointBlank_640x640.png', cat: 'FPS' },
             { id: 'steam', name: 'Steam Wallet', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Steam_640x640.png', cat: 'WALLET' },
             { id: 'google', name: 'Google Play', img: 'https://cdn1.codashop.com/S/content/common/images/mno/GooglePlay_640x640.png', cat: 'VOUCHER' },
             { id: 'netflix', name: 'Netflix Premium', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Netflix_640x640.png', cat: 'SUBS' },
             { id: 'wildrift', name: 'Wild Rift', img: 'https://cdn1.codashop.com/S/content/common/images/mno/WildRift_640x640.png', cat: 'MOBA' },
-            { id: 'eggy', name: 'Eggy Party', img: 'https://cdn1.codashop.com/S/content/common/images/mno/EggyParty_640x640.png', cat: 'FUN' },
             { id: 'lifeafter', name: 'LifeAfter', img: 'https://cdn1.codashop.com/S/content/common/images/mno/LifeAfter_640x640.png', cat: 'RPG' },
-            { id: 'farlight', name: 'Farlight 84', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Farlight84_640x640.png', cat: 'FPS' },
-            { id: 'clash', name: 'Clash of Clans', img: 'https://cdn1.codashop.com/S/content/common/images/mno/COC_640x640.png', cat: 'STRATEGY' },
-            { id: 'hayday', name: 'Hay Day', img: 'https://cdn1.codashop.com/S/content/common/images/mno/HayDay_640x640.png', cat: 'FARM' },
+            { id: 'stumble', name: 'Stumble Guys', img: 'https://cdn1.codashop.com/S/content/common/images/mno/StumbleGuys_640x640.png', cat: 'FUN' },
+            { id: 'eggy', name: 'Eggy Party', img: 'https://cdn1.codashop.com/S/content/common/images/mno/EggyParty_640x640.png', cat: 'FUN' },
             { id: 'brawl', name: 'Brawl Stars', img: 'https://cdn1.codashop.com/S/content/common/images/mno/BrawlStars_640x640.png', cat: 'MOBA' },
-            { id: 'stumble', name: 'Stumble Guys', img: 'https://cdn1.codashop.com/S/content/common/images/mno/StumbleGuys_640x640.png', cat: 'FUN' }
+            { id: 'hayday', name: 'Hay Day', img: 'https://cdn1.codashop.com/S/content/common/images/mno/HayDay_640x640.png', cat: 'FARM' },
+            { id: 'clash', name: 'Clash of Clans', img: 'https://cdn1.codashop.com/S/content/common/images/mno/COC_640x640.png', cat: 'STRATEGY' },
+            { id: 'farlight', name: 'Farlight 84', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Farlight84_640x640.png', cat: 'FPS' }
         ];
 
-        function renderGames() {
-            const container = document.getElementById('game-container');
-            games.forEach(g => {
-                const card = `
-                <div onclick="openOrder('${g.id}', '${g.name}')" class="game-card">
-                    <div class="game-img-container">
-                        <span class="cat-badge">${g.cat}</span>
-                        <img src="${g.img}" class="game-img" onerror="this.src='https://via.placeholder.com/300/0070ff/ffffff?text=${g.id}'">
-                    </div>
-                    <div class="p-6">
-                        <h4 class="font-black text-sm uppercase tracking-tighter">${g.name}</h4>
-                        <div class="text-[10px] text-slate-400 mt-2 font-bold">PROSES INSTAN 24/7</div>
-                    </div>
-                </div>`;
-                container.innerHTML += card;
-            });
+        function toggleAuth(mode) {
+            const isLogin = mode === 'login';
+            document.getElementById('btn-login').className = isLogin ? 'flex-1 py-4 rounded-2xl text-xs font-black bg-blue-600 transition-all' : 'flex-1 py-4 rounded-2xl text-xs font-black text-zinc-500 transition-all';
+            document.getElementById('btn-reg').className = !isLogin ? 'flex-1 py-4 rounded-2xl text-xs font-black bg-blue-600 transition-all' : 'flex-1 py-4 rounded-2xl text-xs font-black text-zinc-500 transition-all';
         }
 
-        function boot() {
-            const u = document.getElementById('user-in').value;
-            const p = document.getElementById('pass-in').value;
+        function ignite() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
             if(u === "KELVIN" && p === "VIONA") {
-                document.getElementById('rank').classList.remove('hidden');
-                enter();
-            } else if(u !== "" && p !== "") { enter(); }
-            else { alert("Fill it, Bego!"); }
+                document.getElementById('owner-status').classList.remove('hidden');
+                document.getElementById('god-gate').style.transform = 'translateY(-100%)';
+                document.getElementById('main-ui').classList.remove('hidden');
+                setTimeout(() => document.getElementById('main-ui').style.opacity = '1', 500);
+                loadGames();
+            } else if (u !== "" && p !== "") {
+                document.getElementById('god-gate').style.transform = 'translateY(-100%)';
+                document.getElementById('main-ui').classList.remove('hidden');
+                setTimeout(() => document.getElementById('main-ui').style.opacity = '1', 500);
+                loadGames();
+            } else { alert("ACCESS_DENIED_BY_CREATOR"); }
         }
 
-        function enter() {
-            document.getElementById('auth-gate').style.transform = 'translateY(-100%)';
-            document.getElementById('app').classList.remove('hidden');
-            renderGames();
+        function loadGames() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            dataStore.forEach(g => {
+                grid.innerHTML += `
+                    <div onclick="openOrder('${g.id}', '${g.name}')" class="omni-card p-6 cursor-pointer group" data-aos="fade-up">
+                        <div class="img-container mb-6 shadow-2xl">
+                            <img src="${g.img}" class="img-node" onerror="this.src='https://via.placeholder.com/300/0062ff/ffffff?text=${g.name}'">
+                            <div class="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-4 py-1 rounded-full text-[8px] font-black uppercase">${g.cat}</div>
+                        </div>
+                        <h4 class="unbound text-[11px] text-center tracking-widest uppercase">${g.name}</h4>
+                        <p class="text-[8px] text-center text-zinc-500 mt-2 font-black uppercase">Instant Injection</p>
+                    </div>`;
+            });
         }
 
         function openOrder(id, name) {
-            document.getElementById('order-ui').classList.remove('hidden');
-            document.getElementById('target-name').innerText = name.toUpperCase();
-            const grid = document.getElementById('nominal-grid');
-            grid.innerHTML = '';
-            const mockNominal = [{n:'Smal Pack', p:'10k'}, {n:'Medium Pack', p:'50k'}, {n:'Large Pack', p:'100k'}, {n:'X-Large Pack', p:'250k'}, {n:'Mega Pack', p:'500k'}, {n:'God Pack', p:'1jt'}];
-            mockNominal.forEach(m => {
-                let d = document.createElement('div');
-                d.className = "bg-white p-6 rounded-3xl border-2 border-transparent hover:border-blue-600 cursor-pointer shadow-sm text-center transition";
-                d.innerHTML = `<div class='text-[10px] font-black text-slate-400'>${name}</div><div class='font-black text-sm mt-1'>${m.n}</div><div class='text-blue-600 font-black mt-4'>Rp ${m.p}</div>`;
-                d.onclick = () => {
-                    document.getElementById('res-item').innerText = m.n;
-                    document.getElementById('res-price').innerText = 'Rp ' + m.p;
-                };
-                grid.appendChild(d);
-            });
-        }
-
-        function closeOrder() { document.getElementById('order-ui').classList.add('hidden'); }
-    </script>
-</body>
-</html>
+            document.getElementById('omni-modal').classList.remove('hidden');
+            document.getElementById('modal-title').innerText = name.toUpperCase();
+            document.getElementById('res-game').innerText = name;
+            const pGrid = document.getElementById('package-grid');
+            pGrid.innerHTML = '';
+            const packs = [{n:'Small Node', p:'15k'}, {n:'Medium Node', p:'45k'}, {n:'Large Node', p:'100k'}, {n:'Mega Node', p:'250k'}, {n:'God Node', p:'1.2jt'}];
+            packs.forEach(p => {
+                pGrid.innerHTML += `
+                    <div onclick="setBill('${p.n}', '${p.p}')" class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl hover:border-blue-500 transition cursor-pointer text-center">
+                        <div class="text-[8px] font-black text-zinc-600 mb-2 uppercase">${name}</div>
+                        <div class="font-black text-sm">${p.n}</div>
+                        <div class="text-blue-500 font-black mt
