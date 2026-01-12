@@ -3,254 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIONA.CORE // QUANTUM DOMINION</title>
+    <title>VIONA.STORE // THE ULTIMATE GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@400;900&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #020202; --gold: #ffd700; }
-        * { cursor: crosshair !important; box-sizing: border-box; }
-        body { background: var(--cyber-black); color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-        .sync { font-family: 'Syncopate', sans-serif; }
+        :root { --accent: #ff007f; --maroon: #800000; --bg: #030303; --card: #0c0c0c; }
+        * { cursor: crosshair !important; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: #fff; overflow-x: hidden; }
         .mono { font-family: 'Share Tech Mono', monospace; }
 
-        /* BACKGROUND ELEMENTS */
-        #particles-js { position: fixed; inset: 0; z-index: -1; }
-        .grid-overlay { position: fixed; inset: 0; background-image: linear-gradient(rgba(128,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(128,0,0,0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; }
+        /* GRADIENT TEXT & BORDER */
+        .gradient-text { background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .neon-glow { box-shadow: 0 0 30px rgba(255, 0, 127, 0.2); }
         
-        /* NEON UI */
-        .glass { background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(25px); border: 1px solid rgba(128, 0, 0, 0.2); }
-        .neon-border { border: 1px solid var(--maroon); box-shadow: 0 0 20px rgba(128, 0, 0, 0.1); }
-        .neon-border:hover { border-color: var(--neon-pink); box-shadow: 0 0 40px rgba(255, 0, 127, 0.4); }
-        .neon-text { text-shadow: 0 0 15px var(--neon-pink); }
-
-        /* TERMINAL STYLE */
-        #terminal-box { font-family: 'Share Tech Mono', monospace; color: #00ff00; font-size: 10px; height: 150px; overflow-y: auto; }
-
-        /* NOTIFICATION */
-        #toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; }
-        .toast { background: rgba(128, 0, 0, 0.9); border-left: 4px solid var(--neon-pink); padding: 15px; margin-bottom: 10px; border-radius: 5px; animation: slideInRight 0.5s; }
-
-        /* LOGIN OVERLAY */
-        #auth-overlay { position: fixed; inset: 0; background: var(--cyber-black); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        /* MODERN CARD (REF: FASTWORK) */
+        .modern-card { background: var(--card); border: 1px solid rgba(255,255,255,0.05); transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1); position: relative; overflow: hidden; }
+        .modern-card:hover { transform: translateY(-10px); border-color: var(--accent); background: rgba(255, 0, 127, 0.05); }
         
-        /* PAYMENT MODAL */
-        #payment-modal { display: none; position: fixed; inset: 0; z-index: 10001; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        /* AUTH OVERLAY (KELVIN ACCESS) */
+        #auth-gate { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; transition: 0.8s ease-in-out; }
+        
+        /* GAME BADGE */
+        .badge-hot { background: linear-gradient(45deg, #ff007f, #800000); font-size: 9px; padding: 2px 8px; border-radius: 50px; position: absolute; top: 10px; right: 10px; }
 
-        .game-card-img { height: 120px; width: 100%; object-fit: cover; border-radius: 15px; filter: grayscale(100%); transition: 0.5s; }
-        .game-card:hover .game-card-img { filter: grayscale(0%); transform: scale(1.1); }
+        /* CUSTOM SCROLL */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="particles-js"></div>
-    <div class="grid-overlay"></div>
-    <div id="toast-container"></div>
-
-    <div id="auth-overlay">
-        <div class="glass p-10 rounded-[40px] border-2 border-maroon-900 w-full max-w-md text-center">
-            <h2 class="sync text-3xl mb-2 neon-text italic">SYSTEM_BOOT</h2>
-            <p class="mono text-[10px] text-zinc-500 mb-10 tracking-[0.5em]">ENCRYPTING_SESSION...</p>
+    <div id="auth-gate">
+        <div class="w-full max-w-md p-10 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tighter mb-2 italic gradient-text">VIONA.STORE</h1>
+            <p class="mono text-[10px] text-zinc-500 tracking-[0.5em] mb-10 uppercase italic">Accessing Server // 001</p>
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="SUBJECT_ID" class="w-full bg-zinc-950 border border-zinc-800 p-5 rounded-2xl outline-none focus:border-neon-pink mono">
-                <input type="password" id="password" placeholder="ACCESS_CODE" class="w-full bg-zinc-950 border border-zinc-800 p-5 rounded-2xl outline-none focus:border-neon-pink mono">
-                <button onclick="login()" class="w-full py-5 bg-maroon-900 rounded-2xl font-black sync text-[12px] hover:bg-neon-pink tracking-[0.3em]">INITIALIZE</button>
+                <input type="text" id="user-in" placeholder="USERNAME" class="w-full bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl outline-none focus:border-pink-500 text-sm mono">
+                <input type="password" id="pass-in" placeholder="PASSWORD" class="w-full bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl outline-none focus:border-pink-500 text-sm mono">
+                <button onclick="checkAccess()" class="w-full py-4 bg-white text-black font-black text-xs tracking-widest rounded-2xl hover:bg-pink-500 hover:text-white transition-all">INITIALIZE_SESSION</button>
             </div>
-            <div class="mt-6 text-[8px] text-zinc-600 italic">OWNER_CREDENTIALS: KELVIN // VIONA</div>
+            <p class="mt-6 text-[9px] text-zinc-700 uppercase">Owner: KELVIN // Pass: VIONA</p>
         </div>
     </div>
 
-    <div id="payment-modal">
-        <div class="glass p-8 rounded-3xl border-2 border-neon-pink max-w-sm w-full text-center">
-            <h3 class="sync text-sm mb-6">QUANTUM_QRIS_PAY</h3>
-            <div class="bg-white p-4 rounded-xl inline-block mb-6">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VionaSayangKelvin" alt="QRIS">
+    <div id="app" class="hidden opacity-0 transition-opacity duration-1000">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center px-6 py-8">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-8 bg-pink-500 rounded-full"></div>
+                <h2 class="text-2xl font-black italic tracking-tighter">VIONA<span class="text-pink-500">.</span></h2>
             </div>
-            <p class="text-[10px] mono text-zinc-400 mb-6 uppercase">Scan to Complete Injection</p>
-            <button onclick="closePayment()" class="w-full py-3 bg-zinc-900 rounded-lg text-xs sync">CANCEL_TRANSACTION</button>
-        </div>
-    </div>
-
-    <div id="app" class="hidden">
-        
-        <nav class="max-w-7xl mx-auto p-6 flex justify-between items-center sticky top-0 z-[100] backdrop-blur-xl border-b border-zinc-900">
-            <div class="flex items-center gap-4">
-                <div class="h-8 w-8 bg-neon-pink animate-pulse rounded-full"></div>
-                <h1 class="sync text-xl font-black neon-text italic">VIONA<span class="text-white">.STORE</span></h1>
+            <div class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+                <a href="#" class="text-white">Home</a>
+                <a href="#" class="hover:text-pink-500">History</a>
+                <a href="#" class="hover:text-pink-500">Track Order</a>
+                <a href="#" id="owner-name" class="text-yellow-500 hidden">[OWNER]</a>
             </div>
-            <div id="terminal-box" class="hidden lg:block w-96 glass p-2 rounded-lg opacity-50">
-                <div id="console-out">> System ready...</div>
-            </div>
-            <div class="flex items-center gap-4">
-                <span id="rank-badge" class="badge bg-zinc-800 text-[8px] px-3 py-1 rounded-full text-gold-500 border border-yellow-600">RANK: SUBJECT</span>
-                <button onclick="location.reload()" class="text-xs hover:text-neon-pink"><i class="fas fa-power-off"></i></button>
-            </div>
+            <button class="bg-zinc-900 px-6 py-2 rounded-full border border-zinc-800 text-[10px] font-bold">LOGOUT</button>
         </nav>
 
-        <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
-            <aside class="space-y-6">
-                <div class="glass p-6 rounded-3xl neon-border">
-                    <h4 class="sync text-[10px] mb-4 text-zinc-500">USER_PROFILE</h4>
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 rounded-full bg-maroon-800 border-2 border-neon-pink overflow-hidden">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Kelvin" alt="AV">
-                        </div>
-                        <div>
-                            <div id="user-display" class="font-bold text-sm">KELVIN</div>
-                            <div class="text-[8px] text-zinc-500 uppercase tracking-widest">Master Key Holder</div>
-                        </div>
+        <main class="max-w-7xl mx-auto px-6">
+            <div class="bg-zinc-900/50 rounded-[40px] p-10 md:p-20 relative overflow-hidden neon-glow mb-20 border border-zinc-800">
+                <div class="relative z-10 max-w-xl">
+                    <span class="text-pink-500 font-bold text-xs uppercase tracking-[0.3em] mb-4 block italic">Special for Viona</span>
+                    <h1 class="text-5xl md:text-7xl font-black leading-[0.9] mb-6 gradient-text">BOOST YOUR GAMING PROTOCOL.</h1>
+                    <p class="text-zinc-400 text-sm mb-10 leading-relaxed">Sistem top-up otomatis tercepat dengan enkripsi level quantum. Aman, Murah, dan Berkelas.</p>
+                    <div class="flex gap-4">
+                        <button class="bg-pink-500 text-white px-8 py-4 rounded-2xl font-bold text-xs">EXPLORE GAMES</button>
+                        <button class="bg-white text-black px-8 py-4 rounded-2xl font-bold text-xs">GUIDEBOOK</button>
                     </div>
                 </div>
-                
-                <div class="glass p-6 rounded-3xl border-l-4 border-l-neon-pink">
-                    <h4 class="sync text-[10px] mb-4">LIVE_FEED</h4>
-                    <div id="live-feed" class="text-[9px] mono space-y-2 text-zinc-400">
-                        </div>
-                </div>
-            </aside>
-
-            <div class="lg:col-span-3 space-y-10">
-                
-                <section>
-                    <h2 class="sync text-lg mb-8 italic">AVAILABLE_PROTOCOLS</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div onclick="selectGame('MLBB', 'https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png')" class="game-card glass p-4 rounded-3xl neon-border cursor-pointer">
-                            <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png" class="game-card-img mb-4">
-                            <div class="text-center font-bold text-xs uppercase">Mobile Legends</div>
-                        </div>
-                        <div onclick="selectGame('FREE_FIRE', 'https://ik.imagekit.io/unipin/assets/images/game-icon/1663047262077_icon_ff.png')" class="game-card glass p-4 rounded-3xl neon-border cursor-pointer">
-                            <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047262077_icon_ff.png" class="game-card-img mb-4">
-                            <div class="text-center font-bold text-xs uppercase">Free Fire</div>
-                        </div>
-                        </div>
-                </section>
-
-                <section id="order-form" class="hidden glass p-10 rounded-[40px] border-t-2 border-t-neon-pink">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div class="space-y-6">
-                            <h3 id="selected-game-title" class="sync text-2xl neon-text">SELECT_GAME</h3>
-                            <div class="space-y-2">
-                                <label class="text-[10px] mono text-zinc-500">ID_QUANTUM</label>
-                                <input type="text" id="target-id" placeholder="Ex: 88271622" class="w-full bg-black border border-zinc-800 p-5 rounded-2xl focus:border-neon-pink outline-none">
-                            </div>
-                            <div id="nominal-grid" class="grid grid-cols-2 gap-3 pt-4">
-                                </div>
-                        </div>
-                        <div class="glass p-8 rounded-[30px] border border-zinc-800 flex flex-col justify-between">
-                            <div class="space-y-4">
-                                <h4 class="sync text-xs italic underline">BILLING_SUMMARY</h4>
-                                <div class="flex justify-between text-xs"><span>ITEM:</span> <span id="bill-item">-</span></div>
-                                <div class="flex justify-between text-xs font-black text-neon-pink italic text-xl pt-4"><span>TOTAL:</span> <span id="bill-price">Rp 0</span></div>
-                            </div>
-                            <button onclick="pay()" class="w-full mt-10 py-5 bg-maroon-900 rounded-2xl sync font-bold hover:bg-neon-pink transition animate-pulse">INITIATE_PAYMENT</button>
-                        </div>
-                    </div>
-                </section>
+                <div class="absolute -top-20 -right-20 w-96 h-96 bg-pink-500/10 blur-[120px] rounded-full"></div>
             </div>
-        </div>
+
+            <section class="mb-32">
+                <div class="flex justify-between items-end mb-12">
+                    <div>
+                        <h3 class="text-2xl font-black mb-2 italic">CHOOSE GAME</h3>
+                        <p class="text-xs text-zinc-500 mono uppercase tracking-widest">Available Nodes: 06</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                    <div onclick="initOrder('MLBB', 'Mobile Legends', '#FF007F')" class="modern-card p-4 rounded-[30px] cursor-pointer">
+                        <span class="badge-hot">HOT</span>
+                        <img src="https://gcdn.pbrd.co/images/vVjI1K7.png?o=1" class="w-full h-32 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/200/800000?text=MLBB'">
+                        <div class="text-xs font-black uppercase text-center">Mobile Legends</div>
+                    </div>
+                    <div onclick="initOrder('FF', 'Free Fire', '#FF0000')" class="modern-card p-4 rounded-[30px] cursor-pointer">
+                        <img src="https://gcdn.pbrd.co/images/vVkE1Uv.png?o=1" class="w-full h-32 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/200/440000?text=FF'">
+                        <div class="text-xs font-black uppercase text-center">Free Fire</div>
+                    </div>
+                    <div onclick="initOrder('ROBLOX', 'Roblox', '#FFFFFF')" class="modern-card p-4 rounded-[30px] cursor-pointer">
+                        <img src="https://files.grid.id/extract/2022/01/17/575/original/roblox.jpg" class="w-full h-32 object-cover rounded-2xl mb-4">
+                        <div class="text-xs font-black uppercase text-center">Roblox (Robux)</div>
+                    </div>
+                    <div onclick="initOrder('GENSHIN', 'Genshin Impact', '#00D1FF')" class="modern-card p-4 rounded-[30px] cursor-pointer">
+                        <img src="https://gcdn.pbrd.co/images/vVktN1Y.png?o=1" class="w-full h-32 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/200/003366?text=GENSHIN'">
+                        <div class="text-xs font-black uppercase text-center">Genshin Impact</div>
+                    </div>
+                    <div onclick="initOrder('VALO', 'Valorant', '#FF4655')" class="modern-card p-4 rounded-[30px] cursor-pointer">
+                        <img src="https://gcdn.pbrd.co/images/vVkFk1T.png?o=1" class="w-full h-32 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/200/550000?text=VALO'">
+                        <div class="text-xs font-black uppercase text-center">Valorant</div>
+                    </div>
+                    <div onclick="initOrder('PUBG', 'PUBG Mobile', '#FFC107')" class="modern-card p-4 rounded-[30px] cursor-pointer">
+                        <img src="https://gcdn.pbrd.co/images/vVkGP4p.png?o=1" class="w-full h-32 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/200/333300?text=PUBG'">
+                        <div class="text-xs font-black uppercase text-center">PUBG Mobile</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="order-section" class="hidden mb-32 grid grid-cols-1 lg:grid-cols-3 gap-10 animate-pulse-slow">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-zinc-900 p-8 rounded-[40px] border border-zinc-800">
+                        <h4 class="text-lg font-bold mb-6 flex items-center gap-3"><i class="fas fa-id-card text-pink-500"></i> STEP 1: USER DATA</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="target-id" placeholder="USER ID" class="bg-black border border-zinc-800 p-5 rounded-2xl outline-none focus:border-pink-500 transition">
+                            <input type="text" id="target-zone" placeholder="SERVER/ZONE" class="bg-black border border-zinc-800 p-5 rounded-2xl outline-none focus:border-pink-500 transition">
+                        </div>
+                    </div>
+                    <div id="nominal-box" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        </div>
+                </div>
+                <div class="bg-pink-500 p-10 rounded-[40px] text-white h-fit sticky top-10">
+                    <h4 class="font-black italic mb-6 underline uppercase">Order Invoice</h4>
+                    <div class="space-y-4 text-sm font-bold">
+                        <div class="flex justify-between"><span>GAME:</span> <span id="bill-game">-</span></div>
+                        <div class="flex justify-between"><span>ITEM:</span> <span id="bill-item">-</span></div>
+                        <div class="flex justify-between pt-10 text-3xl font-black"><span>TOTAL:</span> <span id="bill-price">0</span></div>
+                    </div>
+                    <button onclick="processPay()" class="w-full mt-10 py-5 bg-white text-black rounded-2xl font-black uppercase tracking-tighter hover:bg-black hover:text-white transition">EXECUTE_ORDER</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="py-20 text-center border-t border-zinc-900">
+            <p class="text-[10px] mono text-zinc-600 tracking-[0.8em]">ENCRYPTED BY KELVIN_CORE // 2026</p>
+        </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // LOGIC LOGIN
-        function login() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
+        // AUTH LOGIC
+        function checkAccess() {
+            const u = document.getElementById('user-in').value;
+            const p = document.getElementById('pass-in').value;
             if(u === "KELVIN" && p === "VIONA") {
-                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('auth-gate').style.transform = 'translateY(-100%)';
                 document.getElementById('app').classList.remove('hidden');
-                document.getElementById('user-display').innerText = "KELVIN";
-                document.getElementById('rank-badge').innerText = "RANK: OWNER";
-                logConsole("Access Granted. Welcome Owner Kelvin.");
-                startFeeds();
-            } else if (u !== "" && p !== "") {
-                document.getElementById('auth-overlay').style.display = 'none';
+                setTimeout(() => document.getElementById('app').style.opacity = '1', 500);
+                document.getElementById('owner-name').classList.remove('hidden');
+            } else if(u !== "" && p !== "") {
+                document.getElementById('auth-gate').style.transform = 'translateY(-100%)';
                 document.getElementById('app').classList.remove('hidden');
-                document.getElementById('user-display').innerText = u;
-                logConsole("Access Granted. Welcome Subject " + u);
-                startFeeds();
+                setTimeout(() => document.getElementById('app').style.opacity = '1', 500);
             } else {
-                alert("INVALID ACCESS KEY, BEGO!");
+                alert("ACCESS DENIED, BEGO!");
             }
         }
 
-        // CONSOLE LOGIC
-        function logConsole(msg) {
-            const c = document.getElementById('console-out');
-            c.innerHTML += `<br>> ${msg}`;
-            document.getElementById('terminal-box').scrollTop = document.getElementById('terminal-box').scrollHeight;
-        }
+        // GAME NOMINALS DATA
+        const gameData = {
+            'MLBB': [{n:'86 DM', p:'Rp 20.000'}, {n:'172 DM', p:'Rp 40.000'}, {n:'Weekly Pass', p:'Rp 28.500'}],
+            'FF': [{n:'70 DM', p:'Rp 10.000'}, {n:'140 DM', p:'Rp 20.000'}, {n:'Weekly Member', p:'Rp 30.000'}],
+            'ROBLOX': [{n:'400 Robux', p:'Rp 85.000'}, {n:'800 Robux', p:'Rp 160.000'}, {n:'1700 Robux', p:'Rp 320.000'}],
+            'GENSHIN': [{n:'60 Crystals', p:'Rp 16.500'}, {n:'300 Crystals', p:'Rp 79.000'}, {n:'Blessing Moon', p:'Rp 79.000'}],
+            'VALO': [{n:'125 VP', p:'Rp 15.000'}, {n:'340 VP', p:'Rp 45.000'}, {n:'Night Market', p:'Rp 80.000'}],
+            'PUBG': [{n:'60 UC', p:'Rp 15.000'}, {n:'325 UC', p:'Rp 75.000'}, {n:'Royale Pass', p:'Rp 150.000'}]
+        };
 
-        // FEED LOGIC
-        const feeds = ["Viona_Cute topup 86 DM", "User_Alpha buy Weekly Pass", "X-Coder inject 706 DM", "Viona.Core system updated"];
-        function startFeeds() {
-            setInterval(() => {
-                const f = feeds[Math.floor(Math.random()*feeds.length)];
-                const el = document.getElementById('live-feed');
-                const div = document.createElement('div');
-                div.innerText = `[${new Date().toLocaleTimeString()}] ${f}`;
-                el.prepend(div);
-                if(el.children.length > 5) el.lastChild.remove();
-                
-                // Also show toast
-                if(Math.random() > 0.7) showToast(f);
-            }, 4000);
-        }
-
-        function showToast(msg) {
-            const container = document.getElementById('toast-container');
-            const t = document.createElement('div');
-            t.className = 'toast sync text-[8px]';
-            t.innerText = msg.toUpperCase();
-            container.appendChild(t);
-            setTimeout(() => t.remove(), 3000);
-        }
-
-        // GAME LOGIC
-        function selectGame(name, img) {
-            document.getElementById('order-form').classList.remove('hidden');
-            document.getElementById('selected-game-title').innerText = name;
-            logConsole("Selected Protocol: " + name);
-            
-            const grid = document.getElementById('nominal-grid');
-            grid.innerHTML = '';
-            const items = name === 'MLBB' ? ['86 DM|20rb', '172 DM|40rb', 'Weekly|28rb'] : ['70 DM|10rb', '140 DM|20rb', 'Weekly Gold|30rb'];
-            
-            items.forEach(i => {
-                const [n, p] = i.split('|');
-                const btn = document.createElement('button');
-                btn.className = "p-4 glass rounded-xl border border-zinc-800 hover:border-neon-pink text-xs text-left";
-                btn.innerHTML = `<b>${n}</b><br><span class='text-zinc-500'>${p}</span>`;
-                btn.onclick = () => {
-                    document.getElementById('bill-item').innerText = n;
-                    document.getElementById('bill-price').innerText = 'Rp ' + p.replace('rb', '.000');
-                    logConsole("Resource Ready: " + n);
+        function initOrder(id, name, color) {
+            document.getElementById('order-section').classList.remove('hidden');
+            document.getElementById('bill-game').innerText = name.toUpperCase();
+            const box = document.getElementById('nominal-box');
+            box.innerHTML = '';
+            gameData[id].forEach(item => {
+                let div = document.createElement('div');
+                div.className = "bg-zinc-900 border border-zinc-800 p-6 rounded-[30px] hover:border-pink-500 cursor-pointer transition";
+                div.innerHTML = `<div class='text-xs font-bold text-zinc-500'>${name}</div><div class='text-sm font-black mt-1'>${item.n}</div><div class='text-xs mt-4 text-pink-500'>${item.p}</div>`;
+                div.onclick = () => {
+                    document.getElementById('bill-item').innerText = item.n;
+                    document.getElementById('bill-price').innerText = item.p;
                 };
-                grid.appendChild(btn);
+                box.appendChild(div);
             });
-            window.scrollTo(0, document.getElementById('order-form').offsetTop - 100);
+            window.scrollTo({top: document.getElementById('order-section').offsetTop - 50, behavior: 'smooth'});
         }
 
-        function pay() {
-            document.getElementById('payment-modal').style.display = 'flex';
-            logConsole("Awaiting Payment via QRIS...");
+        function processPay() {
+            const id = document.getElementById('target-id').value;
+            if(!id) return alert("TARGET ID EMPTY, BEGO!");
+            alert("Satelit Viona.Store sedang melakukan injeksi saldo ke ID " + id + ". Tunggu ya Sayang! 💖");
         }
-
-        function closePayment() {
-            document.getElementById('payment-modal').style.display = 'none';
-        }
-
-        // PARTICLES
-        particlesJS("particles-js", {
-            particles: {
-                number: { value: 100 },
-                color: { value: "#800000" },
-                line_linked: { color: "#ff007f", opacity: 0.15 },
-                move: { speed: 2 }
-            }
-        });
     </script>
 </body>
 </html>
