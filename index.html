@@ -3,224 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIONA.STORE - Quantum Arcade Core</title>
+    <title>VIONA.CORE - Quantum Transaction Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #050505; --dark-grey: #1a1a1a; }
+        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #050505; --dark-zinc: #121212; }
+        * { cursor: crosshair !important; scroll-behavior: smooth; }
         body { background: var(--cyber-black); color: #fff; font-family: 'Share Tech Mono', monospace; overflow-x: hidden; }
         .sync { font-family: 'Syncopate', sans-serif; }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* SCROLLBAR CYBER */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--cyber-black); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--maroon), var(--neon-pink)); border-radius: 10px; }
+
+        /* NEON EFFECTS */
+        .neon-glow { text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--maroon); }
+        .neon-border { border: 1px solid rgba(128, 0, 0, 0.5); box-shadow: inset 0 0 15px rgba(128, 0, 0, 0.2); }
+        .neon-border:hover { border-color: var(--neon-pink); box-shadow: 0 0 25px rgba(255, 0, 127, 0.3); }
         
-        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 127, 0.1); position: fixed; top: 0; left: 0; z-index: 10; animation: scan 4s linear infinite; pointer-events: none; }
+        /* BACKGROUND ANIMATION */
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
+        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 127, 0.05); position: fixed; top: 0; left: 0; z-index: 99; animation: scan 6s linear infinite; pointer-events: none; }
         @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
 
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128, 0, 0, 0.3); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8); }
-        .neon-text { text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--maroon); }
+        /* COMPONENT STYLES */
+        .glass { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .game-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .game-card:hover { transform: translateY(-10px) scale(1.05); }
         
-        .carousel-item { display: none; }
-        .carousel-item.active { display: block; }
-        .carousel-dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); margin: 0 4px; cursor: pointer; transition: background 0.3s; }
-        .carousel-dots span.active { background: var(--neon-pink); }
+        /* CAROUSEL */
+        .carousel-container { position: relative; width: 100%; overflow: hidden; border-radius: 20px; border: 1px solid var(--maroon); }
+        .slide { display: none; width: 100%; animation: fade 1s; }
+        .slide img { width: 100%; height: 400px; object-fit: cover; }
+        @keyframes fade { from { opacity: 0.4; } to { opacity: 1; } }
 
-        .game-icon { border: 1px solid var(--dark-grey); background-color: rgba(255,255,255,0.02); transition: all 0.3s ease; }
-        .game-icon:hover { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,0,127,0.3); transform: translateY(-3px) scale(1.02); }
-        .game-icon img { filter: grayscale(80%); transition: filter 0.3s ease; }
-        .game-icon:hover img { filter: grayscale(0%); }
-
-        .form-section { display: none; }
-        .form-section.active { display: block; }
+        /* FLOATING MUSIC PLAYER */
+        .music-player { position: fixed; bottom: 20px; left: 20px; z-index: 100; }
         
-        .tab-btn { padding: 0.75rem 1.5rem; background: var(--dark-grey); color: #ccc; border-bottom: 2px solid transparent; transition: all 0.3s; }
-        .tab-btn.active { background: var(--maroon); color: #fff; border-bottom-color: var(--neon-pink); box-shadow: 0 2px 10px rgba(255,0,127,0.3); }
+        /* SIDEBAR SOCIAL */
+        .sidebar { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 100; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--cyber-black); }
-        ::-webkit-scrollbar-thumb { background: var(--maroon); border-radius: 10px; }
+        /* BADGE */
+        .badge-quantum { background: linear-gradient(90deg, var(--maroon), var(--neon-pink)); font-size: 8px; padding: 2px 6px; border-radius: 2px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
+    <div id="particles-js"></div>
     <div class="scanline"></div>
 
-    <nav class="glass flex justify-between items-center py-4 px-6 rounded-xl mb-8 sticky top-4 z-50">
-        <h1 class="text-2xl font-bold sync neon-text italic">VIONA<span class="text-white">.STORE</span></h1>
-        <div class="flex space-x-4 text-xs sync uppercase">
-            <a href="#" class="hover:text-neon-pink transition">Dashboard</a>
-            <a href="#" class="hover:text-neon-pink transition">Transactions</a>
-            <a href="#" class="hover:text-neon-pink transition text-maroon-500">Support</a>
+    <div class="music-player glass p-3 rounded-full flex items-center gap-3 neon-border">
+        <button onclick="toggleMusic()" class="w-8 h-8 rounded-full bg-maroon-900 flex items-center justify-center">
+            <i id="music-icon" class="fas fa-play text-[10px]"></i>
+        </button>
+        <div class="text-[8px] uppercase tracking-widest pr-4">
+            <div class="text-white">Cyberpunk.mp3</div>
+            <div class="text-zinc-500">Playing: Viona Theme</div>
         </div>
-    </nav>
-
-    <div class="max-w-6xl mx-auto">
-        
-        <section class="mb-10 relative overflow-hidden rounded-2xl glass p-4 md:p-6">
-            <div id="carousel" class="relative h-[200px] md:h-[350px] overflow-hidden rounded-lg">
-                <div class="carousel-item active absolute inset-0 transition-opacity duration-1000 ease-in-out">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/banner_home_web/1706173079633_FF_ID.jpg" alt="Free Fire Banner" class="w-full h-full object-cover rounded-lg">
-                </div>
-                <div class="carousel-item absolute inset-0 transition-opacity duration-1000 ease-in-out">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/banner_home_web/1706173099719_ml_id.jpg" alt="Mobile Legends Banner" class="w-full h-full object-cover rounded-lg">
-                </div>
-                <div class="carousel-item absolute inset-0 transition-opacity duration-1000 ease-in-out">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/banner_home_web/1706173121088_valorant.jpg" alt="Valorant Banner" class="w-full h-full object-cover rounded-lg">
-                </div>
-            </div>
-            <div class="carousel-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2"></div>
-        </section>
-
-        <section class="mb-10 glass p-6 rounded-2xl">
-            <h2 class="sync text-lg mb-6 neon-text">CHOOSE YOUR QUANTUM GATEWAY</h2>
-            <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                <div onclick="showForm('mlbb')" class="game-icon p-3 rounded-lg flex flex-col items-center cursor-pointer">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png" alt="MLBB" class="w-12 h-12 mb-2">
-                    <span class="text-[10px] text-zinc-400">MLBB</span>
-                </div>
-                <div onclick="showForm('ff')" class="game-icon p-3 rounded-lg flex flex-col items-center cursor-pointer">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047262077_icon_ff.png" alt="Free Fire" class="w-12 h-12 mb-2">
-                    <span class="text-[10px] text-zinc-400">FREE FIRE</span>
-                </div>
-                <div onclick="showForm('valorant')" class="game-icon p-3 rounded-lg flex flex-col items-center cursor-pointer">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1672304873735_icon_valorant_new.jpg" alt="Valorant" class="w-12 h-12 mb-2">
-                    <span class="text-[10px] text-zinc-400">VALORANT</span>
-                </div>
-                </div>
-        </section>
-
-        <section id="topup-form-sections" class="glass p-8 rounded-2xl mb-10">
-            <h2 class="sync text-lg mb-6 neon-text">TRANSACTION PROTOCOL</h2>
-            
-            <div id="mlbb-form" class="form-section active">
-                <h3 class="sync text-md mb-4 text-[#ff007f]">MOBILE LEGENDS BANG BANG</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <input type="text" placeholder="ID Pemain" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm">
-                    <input type="text" placeholder="ID Zona (ex: 1234)" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm">
-                </div>
-                <h4 class="text-xs text-zinc-400 mb-3">PILIH NOMINAL DIAMOND</h4>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">MLBB</div> <div class="text-sm font-bold">86 DM</div>
-                    </button>
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">MLBB</div> <div class="text-sm font-bold">172 DM</div>
-                    </button>
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">MLBB</div> <div class="text-sm font-bold text-[#ff007f]">WEEKLY PASS</div>
-                    </button>
-                </div>
-                <button class="maroon-btn w-full py-4 rounded-xl font-bold sync text-[12px] tracking-[0.2em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
-                    PROCEED TO PAYMENT
-                </button>
-            </div>
-            
-            <div id="ff-form" class="form-section">
-                <h3 class="sync text-md mb-4 text-[#ff007f]">FREE FIRE</h3>
-                <input type="text" placeholder="ID Pemain Free Fire" class="w-full bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm mb-6">
-                <h4 class="text-xs text-zinc-400 mb-3">PILIH NOMINAL DIAMOND</h4>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">FF</div> <div class="text-sm font-bold">70 DM</div>
-                    </button>
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">FF</div> <div class="text-sm font-bold">140 DM</div>
-                    </button>
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">FF</div> <div class="text-sm font-bold text-yellow-500">WEEKLY GOLD</div>
-                    </button>
-                </div>
-                <button class="maroon-btn w-full py-4 rounded-xl font-bold sync text-[12px] tracking-[0.2em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
-                    INITIATE FREEDOM
-                </button>
-            </div>
-
-            <div id="valorant-form" class="form-section">
-                <h3 class="sync text-md mb-4 text-[#ff007f]">VALORANT</h3>
-                <input type="text" placeholder="ID Riot" class="w-full bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm mb-6">
-                <h4 class="text-xs text-zinc-400 mb-3">PILIH NOMINAL VP</h4>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">VP</div> <div class="text-sm font-bold">125 VP</div>
-                    </button>
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">VP</div> <div class="text-sm font-bold">340 VP</div>
-                    </button>
-                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                        <div class="text-[10px] text-zinc-500">VP</div> <div class="text-sm font-bold text-blue-500">ELITE BUNDLE</div>
-                    </button>
-                </div>
-                <button class="maroon-btn w-full py-4 rounded-xl font-bold sync text-[12px] tracking-[0.2em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
-                    DEPLOY AGENT
-                </button>
-            </div>
-
-        </section>
-
-        <footer class="text-center text-zinc-600 text-[10px] py-8 border-t border-zinc-800 mt-10">
-            [VIONA.STORE] // QUANTUM TRANSACTION PROTOCOL // ALL RIGHTS RESERVED 2077
-        </footer>
-
+        <audio id="myAudio" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
     </div>
 
+    <div class="sidebar flex flex-col gap-4 p-4 glass rounded-l-2xl border-l-2 border-l-[#ff007f]">
+        <a href="#" class="text-zinc-500 hover:text-[#ff007f]"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="text-zinc-500 hover:text-[#ff007f]"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="text-zinc-500 hover:text-[#ff007f]"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+    <nav class="max-w-7xl mx-auto flex justify-between items-center p-6 sticky top-0 z-[100] glass mt-4 rounded-2xl mx-4">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-maroon-700 to-pink-600 rounded-lg rotate-45 flex items-center justify-center">
+                <span class="-rotate-45 font-bold orbitron">V</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-black sync neon-text uppercase italic">VIONA<span class="text-white">.STORE</span></h1>
+                <div class="text-[8px] tracking-[0.5em] text-zinc-500">QUANTUM_SECURITY_V.5</div>
+            </div>
+        </div>
+        <div class="hidden md:flex gap-8 text-[10px] sync uppercase">
+            <a href="#home" class="hover:text-neon-pink transition border-b-2 border-neon-pink">Home</a>
+            <a href="#games" class="hover:text-neon-pink transition">Services</a>
+            <a href="#leaderboard" class="hover:text-neon-pink transition">Top_Up</a>
+            <a href="#track" class="hover:text-neon-pink transition">History</a>
+        </div>
+        <button class="badge-quantum sync px-4 py-2 hover:opacity-80">CONNECT_WALLET</button>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 mt-10">
+        
+        <section class="mb-20">
+            <div class="carousel-container neon-border h-[450px]">
+                <div class="slide">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent z-10 p-12 flex flex-col justify-center">
+                        <span class="badge-quantum w-fit mb-4">NEW EVENT</span>
+                        <h2 class="text-5xl font-black sync italic mb-4">FREE FIRE<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-500">GENESIS</span></h2>
+                        <p class="text-zinc-400 max-w-md text-sm">Reload your diamonds with the fastest quantum protocol in the sector.</p>
+                        <button class="mt-8 bg-white text-black px-8 py-3 font-bold sync text-xs w-fit hover:bg-neon-pink hover:text-white transition">TOP UP NOW</button>
+                    </div>
+                    <img src="https://wallpapers.com/images/featured/free-fire-2pl077yv9p2p68v9.jpg" alt="FF">
+                </div>
+                <div class="slide">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent z-10 p-12 flex flex-col justify-center">
+                        <span class="badge-quantum w-fit mb-4">MLBB COLLAB</span>
+                        <h2 class="text-5xl font-black sync italic mb-4">MOONLIGHT<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500">RISING</span></h2>
+                        <p class="text-zinc-400 max-w-md text-sm">Exclusive skin bundles available. Secure your diamonds with Viona.Core.</p>
+                        <button class="mt-8 bg-white text-black px-8 py-3 font-bold sync text-xs w-fit">GET DIAMONDS</button>
+                    </div>
+                    <img src="https://images8.alphacoders.com/105/1053702.jpg" alt="ML">
+                </div>
+            </div>
+        </section>
+
+        <section id="games" class="mb-20">
+            <div class="flex items-center gap-4 mb-10">
+                <div class="h-[1px] flex-1 bg-zinc-800"></div>
+                <h2 class="sync text-xl neon-text uppercase tracking-widest">DEPLOY_GATEWAY</h2>
+                <div class="h-[1px] flex-1 bg-zinc-800"></div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <div onclick="initiateProtocol('MLBB')" class="game-card glass p-2 rounded-2xl cursor-pointer neon-border relative group">
+                    <div class="absolute -top-2 -right-2 badge-quantum z-20">POPULAR</div>
+                    <img src="https://play-lh.googleusercontent.com/9jS-6jMh8K0E-o1T5U-u4q7fW_Tj-0X5vGf7XfB9B-X-X_X_X-X" class="w-full h-40 object-cover rounded-xl grayscale group-hover:grayscale-0 transition" alt="ML">
+                    <div class="p-4 text-center">
+                        <div class="text-[10px] font-bold sync">MLBB</div>
+                        <div class="text-[8px] text-zinc-500 italic mt-1">Instant Delivery</div>
+                    </div>
+                </div>
+                <div onclick="initiateProtocol('FREE_FIRE')" class="game-card glass p-2 rounded-2xl cursor-pointer neon-border relative group">
+                    <img src="https://play-lh.googleusercontent.com/WNWZ_9X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X" class="w-full h-40 object-cover rounded-xl grayscale group-hover:grayscale-0 transition" alt="FF">
+                    <div class="p-4 text-center">
+                        <div class="text-[10px] font-bold sync">FREE FIRE</div>
+                        <div class="text-[8px] text-zinc-500 italic mt-1">24/7 Service</div>
+                    </div>
+                </div>
+                </div>
+        </section>
+
+        <section id="protocol" class="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-20 opacity-50 pointer-events-none transition-all duration-700">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="glass p-8 rounded-3xl neon-border relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl">01</div>
+                    <h3 class="sync text-sm mb-6 flex items-center gap-3">
+                        <i class="fas fa-fingerprint text-neon-pink"></i> USER_IDENTIFICATION
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[8px] text-zinc-500 uppercase">Target_ID</label>
+                            <input type="text" id="target_id" placeholder="8-10 Digits" class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-xl focus:border-neon-pink outline-none text-xs transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[8px] text-zinc-500 uppercase">Zone_ID</label>
+                            <input type="text" id="zone_id" placeholder="4-5 Digits" class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-xl focus:border-neon-pink outline-none text-xs transition">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-8 rounded-3xl neon-border relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl">02</div>
+                    <h3 class="sync text-sm mb-6 uppercase">Select_Resources</h3>
+                    <div id="item-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="glass p-8 rounded-3xl border-t-4 border-t-neon-pink sticky top-28">
+                    <h3 class="sync text-xs mb-8 underline">TRANSACTION_LOG</h3>
+                    <div class="space-y-6 text-[10px] tracking-widest">
+                        <div class="flex justify-between border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-500 uppercase">System:</span>
+                            <span id="log-system" class="text-white">WAITING...</span>
+                        </div>
+                        <div class="flex justify-between border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-500 uppercase">Target:</span>
+                            <span id="log-target" class="text-neon-pink">ID_NULL</span>
+                        </div>
+                        <div class="flex justify-between border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-500 uppercase">Resource:</span>
+                            <span id="log-item" class="text-white">NONE</span>
+                        </div>
+                        <div class="flex justify-between pt-4">
+                            <span class="text-zinc-500 uppercase font-bold">Total_Value:</span>
+                            <span id="log-price" class="text-2xl font-black neon-text">Rp 0</span>
+                        </div>
+                    </div>
+                    <button onclick="executeFinalOrder()" class="w-full mt-10 bg-maroon-900 py-4 rounded-xl font-black sync text-[10px] tracking-[0.4em] hover:bg-neon-pink transition-all shadow-2xl">
+                        EXECUTE_ORDER
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="leaderboard" class="mb-20 glass p-10 rounded-3xl neon-border overflow-hidden relative">
+            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-maroon-700 blur-[100px] opacity-20"></div>
+            <h2 class="sync text-xl text-center mb-10 italic">QUANTUM_TOP_WHALES</h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <div class="flex items-center gap-4">
+                        <span class="text-neon-pink font-black italic">01</span>
+                        <div class="w-10 h-10 rounded-full bg-zinc-800 border border-neon-pink flex items-center justify-center">V</div>
+                        <div class="text-sm font-bold uppercase">VIONA_CUTE_99</div>
+                    </div>
+                    <div class="text-xs text-zinc-500">Rp 12,500,000</div>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 opacity-70">
+                    <div class="flex items-center gap-4">
+                        <span class="text-white font-black italic">02</span>
+                        <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">A</div>
+                        <div class="text-sm font-bold uppercase">ALEX_HACKER</div>
+                    </div>
+                    <div class="text-xs text-zinc-500">Rp 5,400,000</div>
+                </div>
+                </div>
+        </section>
+
+    </main>
+
+    <footer class="p-20 bg-zinc-950 border-t border-zinc-800 text-center relative overflow-hidden">
+        <div class="sync text-[10px] text-zinc-500 mb-4 tracking-[0.5em]">OPERATED BY QUANTUM_VIONA_PROTOCOL</div>
+        <div class="text-xs text-zinc-700">© 2077 VIONA.CORE - ALL TRANSACTIONS ENCRYPTED</div>
+        <div class="mt-8 flex justify-center gap-6 opacity-30">
+            <i class="fas fa-shield-alt text-4xl"></i>
+            <i class="fas fa-microchip text-4xl"></i>
+            <i class="fas fa-satellite-dish text-4xl"></i>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Carousel Logic
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.carousel-item');
-        const dotsContainer = document.querySelector('.carousel-dots');
-        let slideInterval;
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) slide.classList.add('active');
-            });
-            updateDots(index);
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-        }
-
-        function createDots() {
-            slides.forEach((_, i) => {
-                const dot = document.createElement('span');
-                dot.onclick = () => {
-                    clearInterval(slideInterval);
-                    showSlide(i);
-                    startAutoSlide();
-                };
-                dotsContainer.appendChild(dot);
-            });
-            updateDots(currentSlide);
-        }
-
-        function updateDots(index) {
-            const dots = dotsContainer.querySelectorAll('span');
-            dots.forEach((dot, i) => {
-                dot.classList.remove('active');
-                if (i === index) dot.classList.add('active');
-            });
-        }
-
-        function startAutoSlide() {
-            slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
-        }
-
-        createDots();
-        showSlide(currentSlide);
-        startAutoSlide();
-
-        // Game Form Logic
-        function showForm(gameId) {
-            document.querySelectorAll('.form-section').forEach(form => {
-                form.classList.remove('active');
-            });
-            document.getElementById(gameId + '-form').classList.add('active');
-        }
-
-        // Initialize first form active
-        document.addEventListener('DOMContentLoaded', () => {
-            showForm('mlbb'); 
+        // PARTICLES BG
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#800000" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 2, random: true },
+                line_linked: { enable: true, distance: 150, color: "#ff007f", opacity: 0.2, width: 1 },
+                move: { enable: true, speed: 1, direction: "none", random: true, out_mode: "out" }
+            }
         });
+
+        // CAROUSEL LOGIC
+        let slideIndex = 0;
+        const slides = document.getElementsByClassName("slide");
+        function showSlides() {
+            for (let i = 0; i < slides.length; i++) slides[i].style.display = "none";
+            slideIndex++;
+            if (slideIndex > slides.length) slideIndex = 1;
+            slides[slideIndex-1].style.display = "block";
+            setTimeout(showSlides, 5000);
+        }
+        showSlides();
+
+        // MUSIC LOGIC
+        function toggleMusic() {
+            const audio = document.getElementById("myAudio");
+            const icon = document.getElementById("music-icon");
+            if (audio.paused) {
+                audio.play();
+                icon.classList.replace("fa-play", "fa-pause");
+            } else {
+                audio.pause();
+                icon.classList.replace("fa-pause", "fa-play");
+            }
+        }
+
+        // DYNAMIC PROTOCOL LOGIC
+        const items = {
+            'MLBB': [
+                {name: '86 Diamonds', price: 'Rp 20.500'},
+                {name: '172 Diamonds', price: 'Rp 41.000'},
+                {name: '257 Diamonds', price: 'Rp 61.500'},
+                {name: 'Weekly Pass', price: 'Rp 28.000', special: true},
+                {name: '706 Diamonds', price: 'Rp 160.000'},
+                {name: 'Twilight Pass', price: 'Rp 150.000'}
+            ],
+            'FREE_FIRE': [
+                {name: '70 Diamonds', price: 'Rp 10.000'},
+                {name: '140 Diamonds', price: 'Rp 20.000'},
+                {name: '355 Diamonds', price: 'Rp 50.000'},
+                {name: 'Weekly Member', price: 'Rp 30.000', special: true}
+            ]
+        };
+
+        function initiateProtocol(game) {
+            const section = document.getElementById('protocol');
+            const grid = document.getElementById('item-grid');
+            section.style.opacity = '1';
+            section.style.pointerEvents = 'auto';
+            document.getElementById('log-system').innerText = game;
+            
+            grid.innerHTML = '';
+            items[game].forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = `p-4 glass rounded-2xl border border-zinc-800 text-left hover:border-neon-pink transition-all group ${item.special ? 'border-neon-pink' : ''}`;
+                btn.innerHTML = `
+                    <div class="text-[8px] text-zinc-500 uppercase">${game}</div>
+                    <div class="text-xs font-bold ${item.special ? 'text-neon-pink' : 'text-white'}">${item.name}</div>
+                    <div class="text-[10px] mt-2 font-black">${item.price}</div>
+                `;
+                btn.onclick = () => {
+                    document.querySelectorAll('.item-btn-active').forEach(b => b.classList.remove('item-btn-active', 'border-neon-pink'));
+                    btn.classList.add('item-btn-active', 'border-neon-pink');
+                    document.getElementById('log-item').innerText = item.name;
+                    document.getElementById('log-price').innerText = item.price;
+                };
+                grid.appendChild(btn);
+            });
+            section.scrollIntoView({behavior: 'smooth'});
+        }
+
+        // INPUT LOGS
+        document.getElementById('target_id').addEventListener('input', (e) => {
+            document.getElementById('log-target').innerText = e.target.value || 'ID_NULL';
+        });
+
+        function executeFinalOrder() {
+            const id = document.getElementById('target_id').value;
+            const item = document.getElementById('log-item').innerText;
+            if(!id || item === 'NONE') return alert('SYSTEM ERROR: COMPLETE THE DATA, BEGO!');
+            
+            alert('PROTOCOL INITIATED: Pesanan ' + item + ' untuk ID ' + id + ' sedang dikirim lewat satelit Viona! 🚀💖');
+        }
     </script>
 </body>
 </html>
