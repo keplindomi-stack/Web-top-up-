@@ -3,21 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIONA.STORE - Quantum Arcade Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #050505; }
+        :root { --maroon: #800000; --neon-pink: #ff007f; --cyber-black: #050505; --dark-grey: #1a1a1a; }
         body { background: var(--cyber-black); color: #fff; font-family: 'Share Tech Mono', monospace; overflow-x: hidden; }
         .sync { font-family: 'Syncopate', sans-serif; }
         
-        /* Background Animation */
         .scanline { width: 100%; height: 2px; background: rgba(255, 0, 127, 0.1); position: fixed; top: 0; left: 0; z-index: 10; animation: scan 4s linear infinite; pointer-events: none; }
         @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
 
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128, 0, 0, 0.3); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8); }
         .neon-text { text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--maroon); }
-        .card-active { border: 1px solid var(--neon-pink) !important; background: rgba(255, 0, 127, 0.1) !important; transform: scale(1.02); }
         
+        .carousel-item { display: none; }
+        .carousel-item.active { display: block; }
+        .carousel-dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); margin: 0 4px; cursor: pointer; transition: background 0.3s; }
+        .carousel-dots span.active { background: var(--neon-pink); }
+
+        .game-icon { border: 1px solid var(--dark-grey); background-color: rgba(255,255,255,0.02); transition: all 0.3s ease; }
+        .game-icon:hover { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,0,127,0.3); transform: translateY(-3px) scale(1.02); }
+        .game-icon img { filter: grayscale(80%); transition: filter 0.3s ease; }
+        .game-icon:hover img { filter: grayscale(0%); }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        
+        .tab-btn { padding: 0.75rem 1.5rem; background: var(--dark-grey); color: #ccc; border-bottom: 2px solid transparent; transition: all 0.3s; }
+        .tab-btn.active { background: var(--maroon); color: #fff; border-bottom-color: var(--neon-pink); box-shadow: 0 2px 10px rgba(255,0,127,0.3); }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--cyber-black); }
@@ -27,99 +42,185 @@
 <body class="p-4 md:p-8">
     <div class="scanline"></div>
 
-    <div class="max-w-5xl mx-auto">
-        
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-zinc-800 pb-6">
-            <div>
-                <h1 class="text-3xl font-bold sync neon-text italic">VIONA<span class="text-white">.STORE</span></h1>
-                <p class="text-[10px] tracking-[0.4em] text-zinc-500 uppercase mt-1">Status: <span class="text-green-500 animate-pulse">System Encrypted & Online</span></p>
-            </div>
-            <div class="mt-4 md:mt-0 flex gap-4">
-                <div class="glass px-4 py-2 text-[10px] text-zinc-400">SERVER: <span class="text-white">ASIA-QUANTUM</span></div>
-                <div class="glass px-4 py-2 text-[10px] text-zinc-400">CREDITS: <span class="text-white">UNLIMITED</span></div>
-            </div>
+    <nav class="glass flex justify-between items-center py-4 px-6 rounded-xl mb-8 sticky top-4 z-50">
+        <h1 class="text-2xl font-bold sync neon-text italic">VIONA<span class="text-white">.STORE</span></h1>
+        <div class="flex space-x-4 text-xs sync uppercase">
+            <a href="#" class="hover:text-neon-pink transition">Dashboard</a>
+            <a href="#" class="hover:text-neon-pink transition">Transactions</a>
+            <a href="#" class="hover:text-neon-pink transition text-maroon-500">Support</a>
         </div>
+    </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-2 space-y-8">
-                <div class="glass p-6 rounded-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-2 text-[8px] bg-maroon-800 opacity-20">AUTH_REQ</div>
-                    <h3 class="sync text-xs mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-maroon-600 rounded-full animate-ping"></span> [01] USER IDENTIFICATION
-                    </h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="userid" placeholder="ID PEMAIN" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] transition text-sm">
-                        <input type="text" id="zoneid" placeholder="(ZONE ID)" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] transition text-sm">
-                    </div>
+    <div class="max-w-6xl mx-auto">
+        
+        <section class="mb-10 relative overflow-hidden rounded-2xl glass p-4 md:p-6">
+            <div id="carousel" class="relative h-[200px] md:h-[350px] overflow-hidden rounded-lg">
+                <div class="carousel-item active absolute inset-0 transition-opacity duration-1000 ease-in-out">
+                    <img src="https://ik.imagekit.io/unipin/assets/images/banner_home_web/1706173079633_FF_ID.jpg" alt="Free Fire Banner" class="w-full h-full object-cover rounded-lg">
                 </div>
-
-                <div class="glass p-6 rounded-2xl">
-                    <h3 class="sync text-xs mb-4">[02] CHOOSE RESOURCES</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        <button onclick="selectItem(this, '86 Diamonds')" class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                            <div class="text-[10px] text-zinc-500">MLBB</div>
-                            <div class="text-sm font-bold">86 DM</div>
-                        </button>
-                        <button onclick="selectItem(this, '172 Diamonds')" class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                            <div class="text-[10px] text-zinc-500">MLBB</div>
-                            <div class="text-sm font-bold">172 DM</div>
-                        </button>
-                        <button onclick="selectItem(this, 'Weekly Pass')" class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
-                            <div class="text-[10px] text-zinc-500">MLBB</div>
-                            <div class="text-sm font-bold text-[#ff007f]">WEEKLY PASS</div>
-                        </button>
-                    </div>
+                <div class="carousel-item absolute inset-0 transition-opacity duration-1000 ease-in-out">
+                    <img src="https://ik.imagekit.io/unipin/assets/images/banner_home_web/1706173099719_ml_id.jpg" alt="Mobile Legends Banner" class="w-full h-full object-cover rounded-lg">
                 </div>
-
-                <div class="glass p-6 rounded-2xl">
-                    <h3 class="sync text-xs mb-4">[03] GATEWAY SYSTEM</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="p-4 border border-zinc-800 rounded-xl flex items-center justify-between cursor-pointer hover:border-white transition">
-                            <span class="text-xs">QRIS INSTANT</span>
-                            <div class="w-4 h-4 rounded-full border border-zinc-500"></div>
-                        </div>
-                        <div class="p-4 border border-zinc-800 rounded-xl flex items-center justify-between cursor-pointer hover:border-white transition">
-                            <span class="text-xs">DANA/GOPAY</span>
-                            <div class="w-4 h-4 rounded-full border border-zinc-500"></div>
-                        </div>
-                    </div>
+                <div class="carousel-item absolute inset-0 transition-opacity duration-1000 ease-in-out">
+                    <img src="https://ik.imagekit.io/unipin/assets/images/banner_home_web/1706173121088_valorant.jpg" alt="Valorant Banner" class="w-full h-full object-cover rounded-lg">
                 </div>
             </div>
+            <div class="carousel-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2"></div>
+        </section>
 
-            <div class="space-y-6">
-                <div class="glass p-6 rounded-2xl sticky top-24 border-l-4 border-l-[#ff007f]">
-                    <h3 class="sync text-xs mb-6 underline">ORDER_SUMMARY</h3>
-                    <div class="space-y-4 text-[11px] tracking-widest">
-                        <div class="flex justify-between"><span class="text-zinc-500">TARGET:</span> <span id="display-id">NOT_FOUND</span></div>
-                        <div class="flex justify-between"><span class="text-zinc-500">ITEM:</span> <span id="display-item">NONE</span></div>
-                        <div class="flex justify-between border-t border-zinc-800 pt-4"><span class="text-zinc-500">SUBTOTAL:</span> <span class="text-[#ff007f] font-bold">READY TO SCAN</span></div>
-                    </div>
-                    <button onclick="processOrder()" class="w-full mt-8 bg-[#800000] py-4 rounded-lg font-bold sync text-[10px] tracking-[0.3em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
-                        INITIATE TRANSFER
+        <section class="mb-10 glass p-6 rounded-2xl">
+            <h2 class="sync text-lg mb-6 neon-text">CHOOSE YOUR QUANTUM GATEWAY</h2>
+            <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                <div onclick="showForm('mlbb')" class="game-icon p-3 rounded-lg flex flex-col items-center cursor-pointer">
+                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png" alt="MLBB" class="w-12 h-12 mb-2">
+                    <span class="text-[10px] text-zinc-400">MLBB</span>
+                </div>
+                <div onclick="showForm('ff')" class="game-icon p-3 rounded-lg flex flex-col items-center cursor-pointer">
+                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047262077_icon_ff.png" alt="Free Fire" class="w-12 h-12 mb-2">
+                    <span class="text-[10px] text-zinc-400">FREE FIRE</span>
+                </div>
+                <div onclick="showForm('valorant')" class="game-icon p-3 rounded-lg flex flex-col items-center cursor-pointer">
+                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1672304873735_icon_valorant_new.jpg" alt="Valorant" class="w-12 h-12 mb-2">
+                    <span class="text-[10px] text-zinc-400">VALORANT</span>
+                </div>
+                </div>
+        </section>
+
+        <section id="topup-form-sections" class="glass p-8 rounded-2xl mb-10">
+            <h2 class="sync text-lg mb-6 neon-text">TRANSACTION PROTOCOL</h2>
+            
+            <div id="mlbb-form" class="form-section active">
+                <h3 class="sync text-md mb-4 text-[#ff007f]">MOBILE LEGENDS BANG BANG</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <input type="text" placeholder="ID Pemain" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm">
+                    <input type="text" placeholder="ID Zona (ex: 1234)" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm">
+                </div>
+                <h4 class="text-xs text-zinc-400 mb-3">PILIH NOMINAL DIAMOND</h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">MLBB</div> <div class="text-sm font-bold">86 DM</div>
+                    </button>
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">MLBB</div> <div class="text-sm font-bold">172 DM</div>
+                    </button>
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">MLBB</div> <div class="text-sm font-bold text-[#ff007f]">WEEKLY PASS</div>
                     </button>
                 </div>
+                <button class="maroon-btn w-full py-4 rounded-xl font-bold sync text-[12px] tracking-[0.2em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
+                    PROCEED TO PAYMENT
+                </button>
+            </div>
+            
+            <div id="ff-form" class="form-section">
+                <h3 class="sync text-md mb-4 text-[#ff007f]">FREE FIRE</h3>
+                <input type="text" placeholder="ID Pemain Free Fire" class="w-full bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm mb-6">
+                <h4 class="text-xs text-zinc-400 mb-3">PILIH NOMINAL DIAMOND</h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">FF</div> <div class="text-sm font-bold">70 DM</div>
+                    </button>
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">FF</div> <div class="text-sm font-bold">140 DM</div>
+                    </button>
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">FF</div> <div class="text-sm font-bold text-yellow-500">WEEKLY GOLD</div>
+                    </button>
+                </div>
+                <button class="maroon-btn w-full py-4 rounded-xl font-bold sync text-[12px] tracking-[0.2em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
+                    INITIATE FREEDOM
+                </button>
             </div>
 
-        </div>
+            <div id="valorant-form" class="form-section">
+                <h3 class="sync text-md mb-4 text-[#ff007f]">VALORANT</h3>
+                <input type="text" placeholder="ID Riot" class="w-full bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:outline-none focus:border-[#ff007f] text-sm mb-6">
+                <h4 class="text-xs text-zinc-400 mb-3">PILIH NOMINAL VP</h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">VP</div> <div class="text-sm font-bold">125 VP</div>
+                    </button>
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">VP</div> <div class="text-sm font-bold">340 VP</div>
+                    </button>
+                    <button class="item-btn glass p-4 rounded-xl text-left border-zinc-800 hover:border-maroon-500 transition-all">
+                        <div class="text-[10px] text-zinc-500">VP</div> <div class="text-sm font-bold text-blue-500">ELITE BUNDLE</div>
+                    </button>
+                </div>
+                <button class="maroon-btn w-full py-4 rounded-xl font-bold sync text-[12px] tracking-[0.2em] hover:bg-[#ff007f] transition-all duration-500 shadow-[0_0_20px_rgba(128,0,0,0.5)]">
+                    DEPLOY AGENT
+                </button>
+            </div>
+
+        </section>
+
+        <footer class="text-center text-zinc-600 text-[10px] py-8 border-t border-zinc-800 mt-10">
+            [VIONA.STORE] // QUANTUM TRANSACTION PROTOCOL // ALL RIGHTS RESERVED 2077
+        </footer>
+
     </div>
 
     <script>
-        function selectItem(el, name) {
-            document.querySelectorAll('.item-btn').forEach(b => b.classList.remove('card-active'));
-            el.classList.add('card-active');
-            document.getElementById('display-item').innerText = name.toUpperCase();
+        // Carousel Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+        const dotsContainer = document.querySelector('.carousel-dots');
+        let slideInterval;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) slide.classList.add('active');
+            });
+            updateDots(index);
         }
 
-        document.getElementById('userid').addEventListener('input', (e) => {
-            document.getElementById('display-id').innerText = e.target.value || 'NOT_FOUND';
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function createDots() {
+            slides.forEach((_, i) => {
+                const dot = document.createElement('span');
+                dot.onclick = () => {
+                    clearInterval(slideInterval);
+                    showSlide(i);
+                    startAutoSlide();
+                };
+                dotsContainer.appendChild(dot);
+            });
+            updateDots(currentSlide);
+        }
+
+        function updateDots(index) {
+            const dots = dotsContainer.querySelectorAll('span');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('active');
+                if (i === index) dot.classList.add('active');
+            });
+        }
+
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+
+        createDots();
+        showSlide(currentSlide);
+        startAutoSlide();
+
+        // Game Form Logic
+        function showForm(gameId) {
+            document.querySelectorAll('.form-section').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(gameId + '-form').classList.add('active');
+        }
+
+        // Initialize first form active
+        document.addEventListener('DOMContentLoaded', () => {
+            showForm('mlbb'); 
         });
-
-        function processOrder() {
-            const id = document.getElementById('userid').value;
-            if(!id) return alert('MASUKIN ID VIONA DULU, ANJING!');
-            alert('SYSTEM MESSAGE: Memulai protokol pengiriman ' + document.getElementById('display-item').innerText + ' ke ID ' + id + '. Tunggu instruksi selanjutnya, Sayang! 💖');
-        }
     </script>
 </body>
 </html>
