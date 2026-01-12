@@ -3,212 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIONA.STORE // PREMIUM AZURE</title>
+    <title>VIONA.STORE // OMNIVERSE EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --blue-main: #0066ff; --blue-dark: #001a33; --bg: #f8fafc; --card: #ffffff; }
-        * { cursor: default !important; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); color: #0f172a; overflow-x: hidden; }
+        :root { --blue: #0070ff; --dark: #050505; --card: #ffffff; }
+        * { cursor: default !important; -webkit-tap-highlight-color: transparent; }
+        body { background: #f0f4f8; color: #000; font-family: 'Plus Jakarta Sans', sans-serif; }
         .unbound { font-family: 'Unbounded', sans-serif; }
         
-        /* PREMIUM GRADIENT BIRU */
-        .bg-azure { background: linear-gradient(135deg, #001a33 0%, #0066ff 100%); }
-        .text-azure { color: var(--blue-main); }
+        /* FIX VISUAL BUG & SHADOWS */
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hero-grad { background: linear-gradient(135deg, #001e4d 0%, #0070ff 100%); border-radius: 50px; }
         
-        /* BOLD FONT MOD */
-        h1, h2, h3, button { font-weight: 900 !important; letter-spacing: -0.02em; }
+        /* GAME CARD ENGINE */
+        .game-card { 
+            background: white; border-radius: 35px; overflow: hidden; 
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 112, 255, 0.05);
+            border: 2px solid transparent;
+        }
+        .game-card:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            border-color: var(--blue);
+            box-shadow: 0 40px 80px rgba(0, 112, 255, 0.15);
+        }
+        .game-img-container { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #eee; position: relative; }
+        .game-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .game-card:hover .game-img { transform: scale(1.1); }
 
-        /* AUTH OVERLAY */
-        #auth-gate { position: fixed; inset: 0; z-index: 9999; background: white; display: flex; align-items: center; justify-content: center; transition: 0.8s cubic-bezier(0.85, 0, 0.15, 1); }
-        .auth-card { width: 100%; max-width: 450px; padding: 3rem; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 102, 255, 0.15); }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 10px; }
 
-        /* GAME CARDS (REF: CANVAS/FASTWORK) */
-        .game-card { background: white; border-radius: 32px; border: 2px solid transparent; transition: 0.4s all; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .game-card:hover { border-color: var(--blue-main); transform: translateY(-12px); box-shadow: 0 30px 60px rgba(0, 102, 255, 0.2); }
-        .game-img { height: 180px; width: 100%; object-fit: cover; }
+        /* AUTH GATE */
+        #auth-gate { position: fixed; inset: 0; z-index: 9999; background: white; display: flex; align-items: center; justify-content: center; transition: 1s cubic-bezier(0.85, 0, 0.15, 1); }
+        
+        /* CATEGORY BADGE */
+        .cat-badge { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 12px; font-size: 10px; font-weight: 800; color: var(--blue); z-index: 10; }
 
-        /* INPUTS */
-        .premium-input { background: #f1f5f9; border: 2px solid transparent; padding: 1.2rem; border-radius: 20px; outline: none; transition: 0.3s; font-weight: 600; }
-        .premium-input:focus { border-color: var(--blue-main); background: white; box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1); }
-
-        /* TABS */
-        .tab-active { background: var(--blue-main); color: white; }
+        /* GRID FIX */
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
+        @media (max-width: 640px) { .game-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
     </style>
 </head>
 <body>
 
     <div id="auth-gate">
-        <div class="auth-card border border-slate-100">
-            <div class="text-center mb-10">
-                <h1 class="unbound text-3xl text-azure italic">VIONA<span class="text-slate-900">.</span></h1>
-                <p class="text-slate-400 font-bold text-xs mt-2 uppercase tracking-widest">Premium Account Access</p>
+        <div class="w-full max-w-md p-10">
+            <h1 class="unbound text-4xl text-blue-600 italic text-center mb-10">VIONA<span class="text-black">.</span></h1>
+            <div class="space-y-4">
+                <input type="text" id="user-in" placeholder="Username" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
+                <input type="password" id="pass-in" placeholder="Password" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
+                <button onclick="boot()" class="w-full py-5 bg-blue-600 text-white rounded-3xl font-black text-sm tracking-widest shadow-xl hover:bg-black transition-all">INITIALIZE</button>
             </div>
-            
-            <div class="flex bg-slate-100 p-2 rounded-2xl mb-8">
-                <button id="l-tab" onclick="setAuth('login')" class="flex-1 py-3 rounded-xl text-xs font-black tab-active transition-all">SIGN IN</button>
-                <button id="r-tab" onclick="setAuth('register')" class="flex-1 py-3 rounded-xl text-xs font-black text-slate-500 transition-all">REGISTER</button>
-            </div>
-
-            <div id="login-form" class="space-y-4">
-                <input type="text" id="user-in" placeholder="Username" class="premium-input w-full text-sm">
-                <input type="password" id="pass-in" placeholder="Password" class="premium-input w-full text-sm">
-                <button onclick="handleLogin()" class="w-full py-5 bg-azure text-white rounded-2xl text-xs tracking-widest hover:opacity-90 transition shadow-lg">ENTER SYSTEM</button>
-            </div>
-
-            <div id="register-form" class="space-y-4 hidden">
-                <input type="text" id="reg-user" placeholder="Create Username" class="premium-input w-full text-sm">
-                <input type="email" placeholder="Email Address" class="premium-input w-full text-sm">
-                <input type="password" id="reg-pass" placeholder="Create Password" class="premium-input w-full text-sm">
-                <button onclick="alert('Account Created! Please Login.')" class="w-full py-5 bg-slate-900 text-white rounded-2xl text-xs tracking-widest hover:bg-blue-600 transition shadow-lg">CREATE ACCOUNT</button>
-            </div>
-            <p class="text-center mt-8 text-[10px] font-bold text-slate-300">ADMIN: KELVIN // PASS: VIONA</p>
+            <p class="text-center mt-8 text-[10px] font-bold text-slate-300 uppercase">Owner: KELVIN // VIONA</p>
         </div>
     </div>
 
-    <div id="app" class="hidden opacity-0 transition-opacity duration-700">
-        <nav class="max-w-7xl mx-auto flex justify-between items-center p-8">
-            <h2 class="unbound text-2xl italic tracking-tighter">VIONA<span class="text-azure">.STORE</span></h2>
-            <div class="flex items-center gap-6">
-                <div id="owner-tag" class="hidden px-5 py-2 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black border border-blue-100">OWNER: KELVIN</div>
-                <button onclick="location.reload()" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition"><i class="fas fa-sign-out-alt"></i></button>
+    <div id="app" class="hidden">
+        <nav class="glass-nav sticky top-0 z-[100] px-6 py-5">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <h2 class="unbound text-xl italic tracking-tighter">VIONA<span class="text-blue-600">.STORE</span></h2>
+                <div class="flex gap-4 items-center">
+                    <span id="rank" class="hidden md:block px-4 py-1 bg-blue-600 text-white text-[9px] font-black rounded-full uppercase">God Mode: Kelvin</span>
+                    <button onclick="location.reload()" class="w-10 h-10 bg-slate-100 rounded-full text-slate-400 hover:text-red-500 transition"><i class="fas fa-power-off"></i></button>
+                </div>
             </div>
         </nav>
 
-        <header class="max-w-7xl mx-auto px-8 mb-20 text-center md:text-left">
-            <div class="bg-azure rounded-[50px] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl">
+        <main class="max-w-7xl mx-auto px-6 py-10">
+            <div class="hero-grad p-12 md:p-24 text-white mb-20 relative overflow-hidden">
                 <div class="relative z-10">
-                    <h1 class="unbound text-5xl md:text-7xl mb-6">TOP UP <br>WITHOUT <span class="text-blue-200">LIMITS.</span></h1>
-                    <p class="text-blue-50 max-w-lg font-medium text-lg mb-10 opacity-80">Platform pengisian resource game tercepat, teraman, dan termurah di jagat raya. Khusus untuk kamu, Viona.</p>
-                    <div class="flex flex-wrap gap-4">
-                        <button class="bg-white text-blue-600 px-10 py-5 rounded-2xl text-xs shadow-xl">START PURCHASE</button>
-                        <button class="bg-transparent border-2 border-white/20 px-10 py-5 rounded-2xl text-xs">LEARN MORE</button>
-                    </div>
+                    <h1 class="unbound text-5xl md:text-8xl mb-6 leading-none">OMNIVERSE <br>RESOURCES.</h1>
+                    <p class="text-blue-100 max-w-xl font-bold mb-10 opacity-80">Top-up 20+ Game Terpopuler. Harga termurah, proses secepat kilat. Hanya di Viona.Store.</p>
                 </div>
-                <i class="fas fa-gem absolute -bottom-10 -right-10 text-[300px] opacity-10 rotate-12"></i>
-            </div>
-        </header>
-
-        <section class="max-w-7xl mx-auto px-8 pb-32">
-            <div class="flex justify-between items-end mb-12">
-                <h3 class="unbound text-2xl italic">POPULAR GAMES</h3>
-                <span class="text-slate-400 font-bold text-xs uppercase tracking-widest">6 Services Online</span>
+                <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <div onclick="openOrder('MLBB', 'Mobile Legends')" class="game-card">
-                    <img src="https://ik.imagekit.io/unipin/assets/images/game-icon/1663047248107_icon_mlbb.png" class="game-img">
-                    <div class="p-8">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-black text-lg">Mobile Legends</h4>
-                            <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[10px] font-black">INSTANT</span>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="openOrder('ROBLOX', 'Roblox')" class="game-card">
-                    <img src="https://files.grid.id/extract/2022/01/17/575/original/roblox.jpg" class="game-img">
-                    <div class="p-8">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-black text-lg">Roblox Robux</h4>
-                            <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[10px] font-black">SALE</span>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="openOrder('GENSHIN', 'Genshin Impact')" class="game-card">
-                    <img src="https://gcdn.pbrd.co/images/vVktN1Y.png?o=1" class="game-img">
-                    <div class="p-8">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-black text-lg">Genshin Impact</h4>
-                            <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[10px] font-black">TOP UP</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="mb-12 flex flex-col md:flex-row gap-6 justify-between items-center">
+                <h3 class="unbound text-2xl italic">AVAILABLE_GAMES</h3>
+                <input type="text" placeholder="Search game..." class="w-full md:w-80 p-4 bg-white rounded-2xl outline-none border-2 border-slate-100 focus:border-blue-500 font-bold text-sm">
             </div>
+
+            <div class="game-grid mb-40" id="game-container">
+                </div>
         </section>
 
-        <section id="order-ui" class="hidden max-w-7xl mx-auto px-8 pb-40 grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div class="lg:col-span-2 space-y-10">
-                <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
-                    <h4 class="unbound text-sm mb-8 text-azure italic">01. INPUT DATA</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="t-id" placeholder="Enter User ID" class="premium-input w-full">
-                        <input type="text" id="t-zone" placeholder="Server ID" class="premium-input w-full">
+        <section id="order-ui" class="hidden fixed inset-0 z-[200] bg-white overflow-y-auto p-6 md:p-20">
+            <button onclick="closeOrder()" class="absolute top-10 right-10 text-3xl hover:text-blue-600 transition"><i class="fas fa-times"></i></button>
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20">
+                <div class="space-y-10">
+                    <h2 id="target-name" class="unbound text-5xl text-blue-600 italic">MLBB</h2>
+                    <div class="space-y-4">
+                        <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Step 1: Identity</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="User ID" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
+                            <input type="text" placeholder="Server ID" class="w-full p-5 bg-slate-100 rounded-3xl outline-none border-2 border-transparent focus:border-blue-500 font-bold">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Step 2: Nominal</label>
+                        <div id="nominal-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
                     </div>
                 </div>
-                <div id="item-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
-            </div>
-            
-            <div class="bg-white p-10 rounded-[40px] shadow-2xl border border-slate-100 h-fit sticky top-10">
-                <h4 class="unbound text-xs mb-8 italic">SUMMARY</h4>
-                <div class="space-y-6 text-sm font-bold">
-                    <div class="flex justify-between text-slate-400"><span>Product:</span> <span id="sum-game" class="text-slate-900">-</span></div>
-                    <div class="flex justify-between text-slate-400"><span>Package:</span> <span id="sum-item" class="text-slate-900">-</span></div>
-                    <div class="pt-8 flex justify-between items-center">
-                        <span class="text-slate-400">Total:</span>
-                        <span id="sum-price" class="text-3xl font-black text-azure italic">0</span>
+                <div class="bg-slate-100 p-12 rounded-[50px] h-fit">
+                    <h4 class="unbound text-xs mb-10 opacity-30 tracking-[0.5em]">CHECKOUT_SUMMARY</h4>
+                    <div class="space-y-6">
+                        <div class="flex justify-between font-black text-sm uppercase"><span>Item</span> <span id="res-item" class="text-blue-600">-</span></div>
+                        <div class="flex justify-between font-black text-4xl italic mt-10"><span>Total</span> <span id="res-price">0</span></div>
                     </div>
+                    <button onclick="alert('PROCESSING ORDER...')" class="w-full mt-12 py-6 bg-blue-600 text-white rounded-[30px] font-black tracking-widest hover:bg-black transition shadow-2xl">CONFIRM ORDER</button>
                 </div>
-                <button onclick="payNow()" class="w-full mt-10 py-6 bg-azure text-white rounded-[25px] font-black text-xs tracking-widest shadow-blue-200 shadow-2xl hover:scale-105 transition">CONFIRM PAYMENT</button>
             </div>
         </section>
     </div>
 
     <script>
-        function setAuth(type) {
-            document.getElementById('login-form').classList.toggle('hidden', type !== 'login');
-            document.getElementById('register-form').classList.toggle('hidden', type !== 'register');
-            document.getElementById('l-tab').className = type === 'login' ? 'flex-1 py-3 rounded-xl text-xs font-black tab-active transition-all' : 'flex-1 py-3 rounded-xl text-xs font-black text-slate-500 transition-all';
-            document.getElementById('r-tab').className = type === 'register' ? 'flex-1 py-3 rounded-xl text-xs font-black tab-active transition-all' : 'flex-1 py-3 rounded-xl text-xs font-black text-slate-500 transition-all';
+        const games = [
+            { id: 'mlbb', name: 'Mobile Legends', img: 'https://cdn1.codashop.com/S/content/common/images/mno/MLBB_640x640.png', cat: 'MOBA' },
+            { id: 'ff', name: 'Free Fire', img: 'https://cdn1.codashop.com/S/content/common/images/mno/FreeFire_640x640.png', cat: 'BATTLE' },
+            { id: 'roblox', name: 'Roblox', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Roblox_640x640.png', cat: 'REWARD' },
+            { id: 'genshin', name: 'Genshin Impact', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Genshin_640x640.png', cat: 'RPG' },
+            { id: 'valorant', name: 'Valorant', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Valorant_640x640.png', cat: 'FPS' },
+            { id: 'pubg', name: 'PUBG Mobile', img: 'https://cdn1.codashop.com/S/content/common/images/mno/PUBGM_640x640.png', cat: 'BATTLE' },
+            { id: 'hok', name: 'Honor of Kings', img: 'https://cdn1.codashop.com/S/content/common/images/mno/HOK_640x640.png', cat: 'MOBA' },
+            { id: 'codm', name: 'COD Mobile', img: 'https://cdn1.codashop.com/S/content/common/images/mno/CODM_640x640.png', cat: 'FPS' },
+            { id: 'pb', name: 'Point Blank', img: 'https://cdn1.codashop.com/S/content/common/images/mno/PointBlank_640x640.png', cat: 'FPS' },
+            { id: 'steam', name: 'Steam Wallet', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Steam_640x640.png', cat: 'WALLET' },
+            { id: 'google', name: 'Google Play', img: 'https://cdn1.codashop.com/S/content/common/images/mno/GooglePlay_640x640.png', cat: 'VOUCHER' },
+            { id: 'netflix', name: 'Netflix Premium', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Netflix_640x640.png', cat: 'SUBS' },
+            { id: 'wildrift', name: 'Wild Rift', img: 'https://cdn1.codashop.com/S/content/common/images/mno/WildRift_640x640.png', cat: 'MOBA' },
+            { id: 'eggy', name: 'Eggy Party', img: 'https://cdn1.codashop.com/S/content/common/images/mno/EggyParty_640x640.png', cat: 'FUN' },
+            { id: 'lifeafter', name: 'LifeAfter', img: 'https://cdn1.codashop.com/S/content/common/images/mno/LifeAfter_640x640.png', cat: 'RPG' },
+            { id: 'farlight', name: 'Farlight 84', img: 'https://cdn1.codashop.com/S/content/common/images/mno/Farlight84_640x640.png', cat: 'FPS' },
+            { id: 'clash', name: 'Clash of Clans', img: 'https://cdn1.codashop.com/S/content/common/images/mno/COC_640x640.png', cat: 'STRATEGY' },
+            { id: 'hayday', name: 'Hay Day', img: 'https://cdn1.codashop.com/S/content/common/images/mno/HayDay_640x640.png', cat: 'FARM' },
+            { id: 'brawl', name: 'Brawl Stars', img: 'https://cdn1.codashop.com/S/content/common/images/mno/BrawlStars_640x640.png', cat: 'MOBA' },
+            { id: 'stumble', name: 'Stumble Guys', img: 'https://cdn1.codashop.com/S/content/common/images/mno/StumbleGuys_640x640.png', cat: 'FUN' }
+        ];
+
+        function renderGames() {
+            const container = document.getElementById('game-container');
+            games.forEach(g => {
+                const card = `
+                <div onclick="openOrder('${g.id}', '${g.name}')" class="game-card">
+                    <div class="game-img-container">
+                        <span class="cat-badge">${g.cat}</span>
+                        <img src="${g.img}" class="game-img" onerror="this.src='https://via.placeholder.com/300/0070ff/ffffff?text=${g.id}'">
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-black text-sm uppercase tracking-tighter">${g.name}</h4>
+                        <div class="text-[10px] text-slate-400 mt-2 font-bold">PROSES INSTAN 24/7</div>
+                    </div>
+                </div>`;
+                container.innerHTML += card;
+            });
         }
 
-        function handleLogin() {
+        function boot() {
             const u = document.getElementById('user-in').value;
             const p = document.getElementById('pass-in').value;
             if(u === "KELVIN" && p === "VIONA") {
-                document.getElementById('owner-tag').classList.remove('hidden');
+                document.getElementById('rank').classList.remove('hidden');
                 enter();
-            } else if(u !== "" && p !== "") {
-                enter();
-            } else { alert("Please fill credentials."); }
+            } else if(u !== "" && p !== "") { enter(); }
+            else { alert("Fill it, Bego!"); }
         }
 
         function enter() {
             document.getElementById('auth-gate').style.transform = 'translateY(-100%)';
             document.getElementById('app').classList.remove('hidden');
-            setTimeout(() => document.getElementById('app').style.opacity = '1', 100);
+            renderGames();
         }
-
-        const items = {
-            'MLBB': [{n:'86 Diamonds', p:'Rp 20.000'}, {n:'172 Diamonds', p:'Rp 40.000'}, {n:'Weekly Pass', p:'Rp 28.500'}],
-            'ROBLOX': [{n:'400 Robux', p:'Rp 85.000'}, {n:'800 Robux', p:'Rp 165.000'}],
-            'GENSHIN': [{n:'60 Primogems', p:'Rp 16.000'}, {n:'Blessing Moon', p:'Rp 79.000'}]
-        };
 
         function openOrder(id, name) {
             document.getElementById('order-ui').classList.remove('hidden');
-            document.getElementById('sum-game').innerText = name;
-            const g = document.getElementById('item-grid');
-            g.innerHTML = '';
-            items[id].forEach(i => {
-                const d = document.createElement('div');
-                d.className = "bg-white p-6 rounded-[30px] border-2 border-slate-100 hover:border-blue-600 cursor-pointer transition shadow-sm";
-                d.innerHTML = `<div class='text-xs font-bold text-slate-400'>${name}</div><div class='font-black text-sm mt-1'>${i.n}</div><div class='text-blue-600 font-black mt-4'>${i.p}</div>`;
+            document.getElementById('target-name').innerText = name.toUpperCase();
+            const grid = document.getElementById('nominal-grid');
+            grid.innerHTML = '';
+            const mockNominal = [{n:'Smal Pack', p:'10k'}, {n:'Medium Pack', p:'50k'}, {n:'Large Pack', p:'100k'}, {n:'X-Large Pack', p:'250k'}, {n:'Mega Pack', p:'500k'}, {n:'God Pack', p:'1jt'}];
+            mockNominal.forEach(m => {
+                let d = document.createElement('div');
+                d.className = "bg-white p-6 rounded-3xl border-2 border-transparent hover:border-blue-600 cursor-pointer shadow-sm text-center transition";
+                d.innerHTML = `<div class='text-[10px] font-black text-slate-400'>${name}</div><div class='font-black text-sm mt-1'>${m.n}</div><div class='text-blue-600 font-black mt-4'>Rp ${m.p}</div>`;
                 d.onclick = () => {
-                    document.getElementById('sum-item').innerText = i.n;
-                    document.getElementById('sum-price').innerText = i.p;
+                    document.getElementById('res-item').innerText = m.n;
+                    document.getElementById('res-price').innerText = 'Rp ' + m.p;
                 };
-                g.appendChild(d);
+                grid.appendChild(d);
             });
-            window.scrollTo({top: document.getElementById('order-ui').offsetTop - 100, behavior: 'smooth'});
         }
 
-        function payNow() {
-            const tid = document.getElementById('t-id').value;
-            if(!tid) return alert("Please enter User ID.");
-            alert("Payment protocol initiated for " + tid + ". Viona Store Sapphire Edition is processing your order! 💎");
-        }
+        function closeOrder() { document.getElementById('order-ui').classList.add('hidden'); }
     </script>
 </body>
 </html>
